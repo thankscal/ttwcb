@@ -3,571 +3,1737 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>越南航空 - 完整斷路器(CB)資料庫 | CEO/NEO智能區分</title>
+    <title>虎航 A320 斷路器 (CB) 資料庫 - 依機號篩選</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background: #f0f7fc;
+            background-color: #f2f5f7;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             padding: 24px 20px;
-            color: #1a2c3e;
+            color: #1e1e1e;
         }
-        .container {
+
+        .app-container {
             max-width: 1600px;
             margin: 0 auto;
-        }
-        /* 越南航空風格頭 */
-        .header {
-            background: #003e5c;
-            border-radius: 20px;
-            padding: 20px 30px;
-            margin-bottom: 28px;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
-            color: white;
-            position: relative;
+            background: rgb(255, 255, 254);
+            border-radius: 28px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
             overflow: hidden;
+            border: 1px solid rgba(94, 91, 84, 0.15);
         }
-        .header::after {
-            content: "✈";
-            font-size: 120px;
-            position: absolute;
-            bottom: -30px;
-            right: 10px;
-            opacity: 0.08;
-            pointer-events: none;
+
+        /* 頁首 - 虎航官网明亮风格 */
+        .header {
+            background: linear-gradient(135deg, #F6AE1C 0%, #FFC84D 100%);
+            padding: 20px 28px;
+            color: #2C2B29;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
+
         .header h1 {
             font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
             display: flex;
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
+            justify-content: space-between;
+            color: #27231C;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
         }
-        .header h1 .vietnam {
-            background: #e3a018;
-            color: #003e5c;
-            font-size: 1rem;
-            padding: 5px 14px;
+
+        .header h1 small {
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: rgba(0,0,0,0.08);
+            padding: 6px 14px;
             border-radius: 40px;
-            font-weight: 700;
+            backdrop-filter: blur(2px);
+            color: #2C2B29;
         }
+
         .sub {
             margin-top: 12px;
             font-size: 0.9rem;
-            border-left: 4px solid #e3a018;
-            padding-left: 16px;
-            opacity: 0.9;
+            opacity: 0.85;
+            border-left: 3px solid #FFFFFF;
+            padding-left: 14px;
+            color: #2C2B29;
+            font-weight: 500;
         }
-        .control-panel {
-            background: white;
-            border-radius: 24px;
-            padding: 20px 24px;
-            margin-bottom: 28px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            border: 1px solid #dce9f0;
+
+        .control-bar {
+            background: #FFFFFF;
+            padding: 20px 28px;
+            border-bottom: 1px solid #e9e8e6;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            justify-content: space-between;
         }
-        .flex-row {
+
+        .filter-group {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             align-items: flex-end;
         }
-        .filter-group {
-            flex: 1;
-            min-width: 170px;
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
-        .filter-group label {
-            display: block;
-            font-size: 0.7rem;
+
+        .filter-item label {
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            color: #2c5a74;
-            margin-bottom: 6px;
             letter-spacing: 0.5px;
+            color: rgb(94, 91, 84);
         }
-        .filter-group select, .filter-group input {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 16px;
-            border: 1.5px solid #cbdde6;
-            background: #fff;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            outline: none;
-        }
-        .filter-group select:focus, .filter-group input:focus {
-            border-color: #003e5c;
-            box-shadow: 0 0 0 3px rgba(0,62,92,0.1);
-        }
-        .btn-toggle {
-            background: #003e5c;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-toggle:hover {
-            background: #002c42;
-            transform: translateY(-1px);
-        }
-        .stat-badge {
-            background: #e3f0f5;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #003e5c;
-        }
-        .selected-aircraft {
-            background: #e3f0f5;
-            border-radius: 20px;
-            padding: 5px 14px;
-            font-weight: 500;
-            color: #003e5c;
-        }
-        .table-wrapper {
+
+        select, input {
             background: white;
-            border-radius: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            overflow-x: auto;
-            border: 1px solid #dce9f0;
+            border: 1px solid #cfceca;
+            padding: 10px 16px;
+            border-radius: 48px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2c2b29;
+            outline: none;
+            transition: all 0.2s ease;
+            min-width: 180px;
         }
+
+        select:focus, input:focus {
+            border-color: rgb(246, 174, 28);
+            box-shadow: 0 0 0 3px rgba(246, 174, 28, 0.2);
+        }
+
+        .search-box {
+            min-width: 260px;
+            flex: 1;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: #fefcf7;
+        }
+
+        .stats {
+            background: #f9f7f3;
+            padding: 10px 28px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgb(94, 91, 84);
+            border-bottom: 1px solid #ecebe7;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 0 20px 0;
+        }
+
         .cb-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
-            min-width: 900px;
+            min-width: 1000px;
         }
+
         .cb-table th {
-            background: #003e5c;
-            color: white;
+            background: #f2f0ec;
+            color: rgb(94, 91, 84);
+            font-weight: 700;
             padding: 14px 12px;
-            font-weight: 600;
             text-align: left;
+            border-bottom: 2px solid rgb(246, 174, 28);
             position: sticky;
             top: 0;
-            white-space: nowrap;
+            backdrop-filter: blur(4px);
         }
+
         .cb-table td {
             padding: 12px 12px;
-            border-bottom: 1px solid #e6edf2;
-            vertical-align: middle;
+            border-bottom: 1px solid #e6e4df;
+            color: #1f1e1c;
+            vertical-align: top;
         }
+
         .cb-table tr:hover td {
-            background-color: #fff5e3;
+            background-color: #fff7e8;
         }
-        .highlight-applicable {
-            background-color: #fef6e0;
-            border-left: 4px solid #e3a018;
-        }
-        .not-applicable-row {
-            opacity: 0.6;
-            background-color: #fafcfd;
-        }
+
         .fin-code {
-            font-family: monospace;
-            font-weight: 700;
-            background: #eef3f9;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            font-weight: 600;
+            background: #f0ede8;
+            display: inline-block;
             padding: 2px 8px;
             border-radius: 20px;
-            display: inline-block;
             font-size: 0.8rem;
         }
-        .location-code {
+
+        .location {
             font-family: monospace;
-            background: #eef3f9;
-            padding: 2px 6px;
-            border-radius: 12px;
-        }
-        .engine-tag {
+            font-weight: 600;
+            background: #eef2f5;
+            padding: 4px 8px;
+            border-radius: 14px;
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 30px;
+        }
+
+        /* 彩色徽章 */
+        .appl-badge {
             font-size: 0.7rem;
             font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 30px;
+            display: inline-block;
             text-align: center;
-            min-width: 70px;
+            background: #eae7e2;
+            color: #3f3d39;
         }
-        .engine-ceo { background: #1e4668; color: white; border: 1px solid #2f6b9e; }
-        .engine-neo { background: #e3a018; color: #1e2a3e; border: 1px solid #c5870a; }
-        .engine-both { background: #6c8f9c; color: white; }
-        .footer-note {
-            margin-top: 24px;
-            text-align: center;
+
+        .appl-ceo {
+            background: rgb(246, 174, 28);
+            color: #2a2418;
+        }
+
+        .appl-neo {
+            background: rgb(94, 91, 84);
+            color: white;
+        }
+
+        .appl-both {
+            background: rgb(252, 201, 24);
+            color: #2c2b29;
+            border: 1px solid #d4a81a;
+        }
+
+        .fsn-range-badge {
+            font-family: monospace;
             font-size: 0.75rem;
-            color: #5c7f90;
-            border-top: 1px solid #dce9f0;
-            padding-top: 20px;
+            background: #eae7e2;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 600;
+            color: #3f3d39;
         }
+
+        .empty-row td {
+            text-align: center;
+            padding: 48px;
+            color: #8f8c86;
+            font-style: italic;
+        }
+
+        footer {
+            background: #f9f7f3;
+            padding: 16px 28px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8f8c86;
+            border-top: 1px solid #e0ddd7;
+        }
+
         @media (max-width: 700px) {
-            body { padding: 16px; }
-            .cb-table th, .cb-table td { padding: 8px 6px; font-size: 0.7rem; }
+            body {
+                padding: 12px;
+            }
+            .control-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="app-container">
     <div class="header">
         <h1>
-            ✈ 越南航空 完整斷路器 (CB) 資料庫
-            <span class="vietnam">C/B MASTER DATABASE</span>
+            ✈️ 虎航 A320 斷路器 (CB) 資料庫
+            <small>Circuit Breaker Reference</small>
         </h1>
-        <div class="sub">A321 CEO (V2533) · A320/A321 NEO (PW1100G) · 依 FSN 範圍自動判別適用性 · 引擎專用濾色</div>
+        <div class="sub">
+            🔧 可依「機號」篩選適用之 CB &nbsp;|&nbsp; 彩色標籤：橙黄(CEO) 灰黑(NEO) 黄色(兩者通用)<br>
+            📌 未選機號時顯示全部，關鍵字搜尋涵蓋面板/名稱/FIN/位置
+        </div>
     </div>
 
-    <div class="control-panel">
-        <div class="flex-row">
-            <div class="filter-group" style="flex:1.5;">
-                <label>🔍 自由搜尋 (PANEL / 名稱 / FIN / 位置)</label>
-                <input type="text" id="searchInput" placeholder="例: 1DA1, 49VU, ELAC, IGN, FADEC, 1CN" autocomplete="off">
-            </div>
-            <div class="filter-group">
-                <label>✈ 選擇機號查找使用CB</label>
-                <select id="aircraftSelect"></select>
-            </div>
-            <div class="filter-group">
-                <label>⚙️ 引擎專用篩選</label>
-                <select id="engineFilter">
-                    <option value="all">全部 (CEO+NEO+通用)</option>
-                    <option value="CEO">CEO 專用 (V2533)</option>
-                    <option value="NEO">NEO 專用 (PW)</option>
-                    <option value="both">通用型 (兩者皆可用)</option>
+    <div class="control-bar">
+        <div class="filter-group">
+            <div class="filter-item">
+                <label>✈️ 機號 (TAIL No.)</label>
+                <select id="tailSelect">
+                    <option value="all">全部機號 (顯示所有 CB)</option>
                 </select>
             </div>
-            <div class="filter-group">
-                <label>🎯 顯示模式</label>
-                <div style="display: flex; gap: 10px;">
-                    <button id="toggleApplicableBtn" class="btn-toggle">✅ 僅顯示飛機適用CB</button>
-                    <button id="resetHighlightBtn" class="btn-toggle" style="background:#6f8f9f;">🔄 重置</button>
-                </div>
+            <div class="filter-item search-box">
+                <label>🔍 關鍵字搜尋</label>
+                <input type="text" id="searchInput" placeholder="面板 / 名稱 / FIN / 位置" autocomplete="off">
             </div>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; flex-wrap: wrap; gap: 10px;">
-            <div><span class="stat-badge" id="cbCountStat">載入中...</span></div>
-            <div id="activeAircraftInfo" class="selected-aircraft">⚡ 未選擇特定飛機 → 顯示所有CB</div>
-        </div>
+    </div>
+
+    <div class="stats" id="statsArea">
+        <span>📋 載入資料中...</span>
+        <span>⚡ 資料來源：原始文件 FSN 範圍</span>
     </div>
 
     <div class="table-wrapper">
         <table class="cb-table" id="cbTable">
             <thead>
-                <tr><th>PANEL</th><th>DESIGNATION / 功能描述</th><th>FIN</th><th>位置</th><th>適用FSN範圍</th><th>適用引擎</th></tr>
+            <tr>
+                <th>簡易識別</th>
+                <th>面板 (PANEL)</th>
+                <th>名稱 / 描述</th>
+                <th>FIN</th>
+                <th>夾子位置</th>
+                <th>原始 FSN 適用範圍</th>
+            </tr>
             </thead>
-            <tbody id="cbTableBody"></tbody>
+            <tbody id="tableBody">
+                <tr><td colspan="6" class="empty-row">⏳ 解析斷路器資料中，請稍後......</td></tr>
+            </tbody>
         </table>
     </div>
-    <div class="footer-note">
-        ※ 數據源來自官方文件完整CB列表 (共537筆) 涵蓋所有面板 & 系統。<br>
-        引擎適用性基於FSN範圍自動判別： 009-208,251-300 → CEO (V2533) ； 301-500 → NEO (PW) 。重疊範圍 → 通用。<br>
-        引擎篩選器獨立運作，飛機下拉可高亮當前飛機實際適用的斷路器。
-    </div>
+    <footer>
+        虎航技術文件 CB 數據庫 | 機號過濾基於文件內各機之 FSN 序號 | 完全忠實於原始資料
+    </footer>
 </div>
 
 <script>
-    // --------------------------------------------------------------
-    // 1. 完整飛機資料庫 (每架都標明 engineType)
-    // --------------------------------------------------------------
-    const aircraftDB = [
-        // CEO 機隊 (V2533) FSN 9~128, 201~208, 251
-        { reg: "VN-A353", fsn: 9, engineType: "CEO", engineModel: "V2533-A5" },
-        { reg: "VN-A354", fsn: 10, engineType: "CEO" }, { reg: "VN-A356", fsn: 11, engineType: "CEO" },
-        { reg: "VN-A357", fsn: 12, engineType: "CEO" }, { reg: "VN-A358", fsn: 13, engineType: "CEO" },
-        { reg: "VN-A359", fsn: 14, engineType: "CEO" }, { reg: "VN-A363", fsn: 15, engineType: "CEO" },
-        { reg: "VN-A323", fsn: 101, engineType: "CEO" },{ reg: "VN-A324", fsn: 102, engineType: "CEO" },
-        { reg: "VN-A325", fsn: 103, engineType: "CEO" },{ reg: "VN-A326", fsn: 104, engineType: "CEO" },
-        { reg: "VN-A327", fsn: 105, engineType: "CEO" },{ reg: "VN-A329", fsn: 106, engineType: "CEO" },
-        { reg: "VN-A331", fsn: 107, engineType: "CEO" },{ reg: "VN-A332", fsn: 108, engineType: "CEO" },
-        { reg: "VN-A390", fsn: 109, engineType: "CEO" },{ reg: "VN-A396", fsn: 110, engineType: "CEO" },
-        { reg: "VN-A605", fsn: 111, engineType: "CEO" },{ reg: "VN-A608", fsn: 112, engineType: "CEO" },
-        { reg: "VN-A609", fsn: 113, engineType: "CEO" },{ reg: "VN-A611", fsn: 114, engineType: "CEO" },
-        { reg: "VN-A612", fsn: 115, engineType: "CEO" },{ reg: "VN-A613", fsn: 116, engineType: "CEO" },
-        { reg: "VN-A614", fsn: 117, engineType: "CEO" },{ reg: "VN-A615", fsn: 118, engineType: "CEO" },
-        { reg: "VN-A338", fsn: 119, engineType: "CEO" },{ reg: "VN-A339", fsn: 120, engineType: "CEO" },
-        { reg: "VN-A392", fsn: 121, engineType: "CEO" },{ reg: "VN-A393", fsn: 122, engineType: "CEO" },
-        { reg: "VN-A395", fsn: 123, engineType: "CEO" },{ reg: "VN-A397", fsn: 124, engineType: "CEO" },
-        { reg: "VN-A399", fsn: 125, engineType: "CEO" },{ reg: "VN-A601", fsn: 126, engineType: "CEO" },
-        { reg: "VN-A603", fsn: 127, engineType: "CEO" },{ reg: "VN-A604", fsn: 128, engineType: "CEO" },
-        { reg: "VN-A334", fsn: 201, engineType: "CEO" },{ reg: "VN-A335", fsn: 202, engineType: "CEO" },
-        { reg: "VN-A336", fsn: 203, engineType: "CEO" },{ reg: "VN-A398", fsn: 205, engineType: "CEO" },
-        { reg: "VN-A602", fsn: 206, engineType: "CEO" },{ reg: "VN-A606", fsn: 207, engineType: "CEO" },
-        { reg: "VN-A610", fsn: 208, engineType: "CEO" },{ reg: "VN-A388", fsn: 251, engineType: "CEO" },
-        // NEO 機隊 (PW)
-        { reg: "VN-A616", fsn: 301, engineType: "NEO", engineModel: "PW1130G-JM" },
-        { reg: "VN-A617", fsn: 302, engineType: "NEO" },{ reg: "VN-A618", fsn: 303, engineType: "NEO" },
-        { reg: "VN-A501", fsn: 304, engineType: "NEO" },{ reg: "VN-A619", fsn: 305, engineType: "NEO" },
-        { reg: "VN-A620", fsn: 306, engineType: "NEO" },{ reg: "VN-A622", fsn: 307, engineType: "NEO" },
-        { reg: "VN-A621", fsn: 308, engineType: "NEO" },{ reg: "VN-A623", fsn: 309, engineType: "NEO" },
-        { reg: "VN-A624", fsn: 310, engineType: "NEO" },{ reg: "VN-A625", fsn: 311, engineType: "NEO" },
-        { reg: "VN-A503", fsn: 312, engineType: "NEO" },{ reg: "VN-A505", fsn: 313, engineType: "NEO" },
-        { reg: "VN-A506", fsn: 314, engineType: "NEO" },{ reg: "VN-A507", fsn: 315, engineType: "NEO" },
-        { reg: "VN-A508", fsn: 316, engineType: "NEO" },{ reg: "VN-A509", fsn: 317, engineType: "NEO" },
-        { reg: "VN-A510", fsn: 318, engineType: "NEO" },{ reg: "VN-A511", fsn: 319, engineType: "NEO" },
-        { reg: "VN-A512", fsn: 320, engineType: "NEO" },{ reg: "VN-A513", fsn: 401, engineType: "NEO" },
-        { reg: "VN-A515", fsn: 402, engineType: "NEO" },{ reg: "VN-A514", fsn: 403, engineType: "NEO" }
-    ];
-    // 補全 engineModel 顯示用
-    aircraftDB.forEach(ac => { if(ac.engineType === 'CEO' && !ac.engineModel) ac.engineModel = "V2533-A5"; if(ac.engineType === 'NEO' && !ac.engineModel) ac.engineModel = "PW1100G-JM"; });
+    // ----- 原始文件完整內容 (已全部保留，無任何刪減) -----
+    const rawDocContent = `Model Registration Engine A/C Range
 
-    // --------------------------------------------------------------
-    // 2. 完整 CB 列表 (從原始文件中逐行提取，共537筆)
-    //    保持資料完整不變
-    // --------------------------------------------------------------
-    const cbItemsRaw = [
-        ["49VU","FLIGHT CONTROLS/SLT FLP/1 POS/IND","1CN","B12","ALL"],
-        ["122VU","ANTI ICE/PROBES/1/TAT","1DA1","Z12","ALL"],
-        ["122VU","ANTI ICE/PROBES/2/TAT","1DA2","Y15","ALL"],
-        ["49VU","ANTI ICE/RAIN/RPLNT/CAPT","1DB1","D01","ALL"],
-        ["122VU","ANTI ICE/RAIN/RPLNT/F/O","1DB2","W11","ALL"],
-        ["123VU","ANTI ICE/L/WSHLD","1DG1","AF10","ALL"],
-        ["123VU","ANTI ICE/R/WSHLD","1DG2","AF03","ALL"],
-        ["49VU","ANTI ICE/WING/MONG","1DL","C01","ALL"],
-        ["122VU","ANTI ICE/ENG/1","1DN1","X10","ALL"],
-        ["122VU","ANTI ICE/ENG/2","1DN2","W10","ALL"],
-        ["122VU","DUMMY CB / FOOT WARMER","1DR","X15","009-100,101-203,205-208,251-500"],
-        ["2000VU","DR AREA HTG PANELS-DR2-HTR","1DS","A08","009-203,205-208,251-400"],
-        ["2000VU","WASTE WIP-DRAINMAST-FWD","1DU","B06","009-108,110-200,251-400"],
-        ["121VU","ENG1/REV/LOCK","1EG1","N44","ALL"],
-        ["121VU","ENG2/REV/LOCK","1EG2","N45","ALL"],
-        ["121VU","ENGINE/ENG1/OIL/QTY","1EN1","N39","009-203,205-208,251-300"],
-        ["49VU","L/G/LGCIU/SYS1/NORM","1GA","C09","ALL"],
-        ["121VU","HYDRAULIC/BRAKING AND STEERING/SYS1/CTL","1GG","M34","ALL"],
-        ["122VU","AIR COND/RECIRC FAN/L/SPLY","1HG","X18","ALL"],
-        ["49VU","AIR COND/CAB/PRESS/CTL1","1HL","D09","ALL"],
-        ["49VU","ENGINE/1 AND 2/IGN/SYS A","1JH","A03","ALL"],
-        ["49VU","ENGINE/1/HP FUEL SOV","1KC1","A01","ALL"],
-        ["49VU","ENGINE/2/HP FUEL SOV","1KC2","A02","ALL"],
-        ["121VU","APU/ECB/SPLY","1KD","L41","ALL"],
-        ["122VU","LIGHTING/EXT LT/NAV1/AND LOGO/LT","1LA","T03","009-100,251-300,101-203,205-208,301-500"],
-        ["122VU","LIGHTING/LANDING LT/L/SPLY","1LB","T04","ALL"],
-        ["122VU","LIGHTING/EXT LT/RWY TURN OFF/L","1LC1","W06","ALL"],
-        ["122VU","LIGHTING/EXT LT/RWY TURN OFF/R","1LC2","W05","ALL"],
-        ["49VU","LIGHTING/EMER LT/CKPT/DOME","1LE","H08","ALL"],
-        ["2001VU","LIGHT-SEC19","1LJ","E07","009-014,201-203,205-208,251-500"],
-        ["122VU","DOORS/CARGO/DOORS/CTL","1MJ","T12","ALL"],
-        ["122VU","COCKPIT SEATS/SEAT CTL/CAPT","1MS1","U11","ALL"],
-        ["121VU","PILOTS OUTLETS/STAT INV","1NA","K25","ALL"],
-        ["106VU","EMER/SHED/CNTOR/SPLY","1PH","C07","ALL"],
-        ["125VU","101PP/SPLY","1PN1","CD01","ALL"],
-        ["124VU","202PP/SPLY","1PN2","BG01","ALL"],
-        ["122VU","ELEC/REFLNG/ON/BAT","1PR","U28","ALL"],
-        ["121VU","FUEL/L WING TK/PUMP1 SPLY","1QA","N23","ALL"],
-        ["121VU","APU/FUEL/BLOW OFF/CTL","1QC","K39","ALL"],
-        ["49VU","FUEL/LP VALVE/MOT1/ENG1","1QG","A08","ALL"],
-        ["49VU","FUEL/FQI/CHAN/1","1QT","A13","ALL"],
-        ["49VU","HF1","1RE1","HA14","ALL"],
-        ["121VU","COM NAV/HF2","1RE2","L13","ALL"],
-        ["49VU","NAV/ADF/1","1RP1","H14","009-203,205-208,251-300"],
-        ["49VU","NAV PROBES/ADF/1","1RP1","F09","301-500"],
-        ["121VU","COM NAV/RAD ALTM/1","1SA1","K11","ALL"],
-        ["121VU","ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/A","1WE1","Q43","ALL"],
-        ["49VU","LIGHTING/EMER LT/CABIN","1WL","H05","ALL"],
-        ["122VU","ELEC/GALY & CAB/CTL","1XA","S26","ALL"],
-        ["123VU","AC ESS/BUS ON/BUS 1","1XC","AC12","ALL"],
-        ["106VU","AC/SHED/ESS BUS/CNTOR/CTL","1XH","C04","ALL"],
-        ["123VU","BUS 1/101XP/SPLY","1XN1","AD11","ALL"],
-        ["122VU","ELEC/IDG1/DISC","1XT","T24","ALL"],
-        ["49VU","ANTI ICE/PROBES/PHC/1","2DA1","D03","ALL"],
-        ["122VU","ANTI ICE/PROBES/PHC/2","2DA2","Y12","ALL"],
-        ["49VU","ANTI ICE/WING/CTL","2DL","C02","ALL"],
-        ["2000VU","POT/WASTE WIP-HEATER-CTL","2DW","D08","401-500"],
-        ["2000VU","POT WIP-HEATER-CTL","2DW","A01","009-203,205-208,251-400"],
-        ["121VU","HYDRAULIC/LGCIU/SYS2","2GA","Q35","ALL"],
-        ["122VU","AIR COND/RECIRC FAN/L/CTL","2HG","X20","ALL"],
-        ["123VU","AVNCS VENT/EXTC/FAN","2HQ","AE02","401-500"],
-        ["49VU","AIR BLEED/X FEED/VALVE/BAT","2HV","D13","ALL"],
-        ["49VU","ENGINE/1/FADEC A/AND EIU 1","2KS1","A04","ALL"],
-        ["49VU","ENGINE/2/FADEC A/AND EIU 2","2KS2","A05","ALL"],
-        ["122VU","LIGHTING/EXT LT/NAV2/AND LOGO/LT","2LA","T02","ALL"],
-        ["122VU","LIGHTING/LANDING LT/R/SPLY","2LB","T06","ALL"],
-        ["2000VU","LIGHT-CARGO COMPT-AFT","2LU","J07","ALL"],
-        ["2001VU","LAV AFT-HOT WATER-F","2MB","B02","401-500,009-100,251-400,201-203,205-208,101-200"],
-        ["123VU","FWD GALLEY/FEEDER D","2MC","AD04","401-500,009-203,205-208,251-400"],
-        ["2000VU","SEMI AUTO CLS-FWD","2MY","E06","009-203,205-208,301-400"],
-        ["121VU","PILOTS OUTLETS/115V 60HZ","2NA","K23","ALL"],
-        ["122VU","ELEC/REFLNG/NORM","2PR","S27","ALL"],
-        ["123VU","TR1/SPLY","2PU1","AB10","ALL"],
-        ["121VU","FUEL/R WING TK/PUMP1 SPLY","2QA","Q23","ALL"],
-        ["49VU","FUEL/X FEED/VALVE/MOT1","2QE","A12","ALL"],
-        ["49VU","FUEL/LP VALVE/MOT1/ENG2","2QG","A09","ALL"],
-        ["121VU","FUEL/FQI/CHAN/2","2QT","M27","ALL"],
-        ["49VU","COM/VHF/1","2RC1","G09","ALL"],
-        ["121VU","COM NAV/VHF/2","2RC2","L04","ALL"],
-        ["49VU","COM/RMP/1","2RG1","G10","009-203,205-208,251-400"],
-        ["49VU","COM/CVR/SPLY","2RK","E14","009-100,251-300"],
-        ["49VU","NAV/VOR/1","2RS1","G13","009-203,205-208,251-400"],
-        ["2000VU","PRAM","2RX","E01","009-014,251-300"],
-        ["121VU","CFDS/CFDIU/SPLY","2TW","J18","ALL"],
-        ["121VU","EIS/HORN/SPLY","2WC","P09","ALL"],
-        ["121VU","ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/B","2WE1","Q44","009-203,205-208,251-300,301-500"],
-        ["121VU","APU/FIRE/EXTIG/SQUIB/B","2WF","L39","ALL"],
-        ["49VU","LIGHTING/EMER LT/CABIN","2WL","H06","ALL"],
-        ["121VU","EIS/SDAC/2/SPLY","2WV","Q06","ALL"],
-        ["49VU","ANTI ICE/PROBES/PITOT/1","3DA1","D02","ALL"],
-        ["122VU","ANTI ICE/PROBES/2/PITOT","3DA2","Y14","ALL"],
-        ["2000VU","DR AREA HTG PANELS-DR2-CTL","3DS","A06","009-203,205-208,251-400"],
-        ["121VU","HYDRAULIC/BRAKING AND STEERING/SYS2/CTL","3GG","M35","ALL"],
-        ["122VU","AIR COND/RECIRC FAN/R/SPLY","3HG","W18","ALL"],
-        ["121VU","ENGINE/IGN/ENG1/SYS B","3JH1","P41","ALL"],
-        ["122VU","LIGHTING/LANDING LT/L/CTL","3LB","T05","ALL"],
-        ["123VU","AFT GALLEY/FEEDER A","3MC","AF04","ALL"],
-        ["2000VU","SEMI AUTO CLS-FWD","3MY","E08","009-203,205-208,301-400"],
-        ["122VU","ELEC/CNTOR/ESS/DC BUS/TIE","3PC","W26","ALL"],
-        ["125VU","103PP/SPLY","3PN1","CE01","ALL"],
-        ["121VU","FUEL/PUMPS/1/L CTL AND R IND","3QA","R23","ALL"],
-        ["121VU","APU/FIRE/LP VALVE/STBY","3WF","M41","ALL"],
-        ["122VU","LIGHTING/CABIN/EMER/LT","3WL","V07","ALL"],
-        ["49VU","OXYGEN/PASSENGER/CTL AND WARN","3WR","HA04","ALL"],
-        ["49VU","SDAC/1/SPLY","3WV","F04","ALL"],
-        ["49VU","FWS/FWC1/SPLY","3WW","F01","ALL"],
-        ["123VU","BUS 1/103XP/SPLY","3XN1","AB11","ALL"],
-        ["49VU","ANTI ICE/PROBES/AOA/1","4DA1","D04","ALL"],
-        ["122VU","ANTI ICE/PROBES/2/AOA","4DA2","Y13","ALL"],
-        ["122VU","ANTI ICE/WIPER/CAPT","4DB1","X12","ALL"],
-        ["122VU","ANTI ICE/F/O/WIPER","4DB2","W12","ALL"],
-        ["122VU","ANTI ICE/ICE DET/L","4DD1","V12","009-203,205-208,301-500"],
-        ["122VU","ANTI ICE/ICE DET/R","4DD2","V13","009-203,205-208,301-500"],
-        ["49VU","NAV PROBES/ADIRU1/115VAC","4FP1","F06","ALL"],
-        ["121VU","ADIRS/ADIRU/2/115VAC","4FP2","N06","ALL"],
-        ["121VU","CLOCK/STBY/SPLY","4FS","N02","ALL"],
-        ["122VU","RPCU","4HL","X23","ALL"],
-        ["121VU","ENGINE/ENG1/FADEC B/AND EIU 1","4KS1","R41","ALL"],
-        ["121VU","ENGINE/ENG2/FADEC B/AND EIU2","4KS2","Q40","301-500,009-203,205-208,251-300"],
-        ["122VU","LIGHTING/LANDING LT/R/CTL","4LB","T07","ALL"],
-        ["106VU","ESS TR/SPLY","4PE","C01","ALL"],
-        ["121VU","FUEL/PUMPS/1/R CTL AND L IND","4QA","R28","ALL"],
-        ["49VU","COM/CVR/CTL","4RK","E13","009-100,251-300"],
-        ["49VU","COM/ACP CAPT/SELCAL/INT 1 AUDIO/AVNCS","4RN","G06","009-203,205-208,251-400"],
-        ["121VU","COM NAV/TCAS","4SG","K10","009-203,205-208,301-500"],
-        ["106VU","AC ESS/BUS NORM/CNTOR/CTL","4XC","B03","ALL"],
-        ["122VU","ELEC/EXT PWR/LT CLT/AVAIL","4XG","X31","ALL"],
-        ["2000VU","WAP","27MH","D07","301-500"],
-        ["2000VU","IFE-VCC-AC","21MH","C02","301-500"],
-        ["2000VU","PES-VIDEO-CONTROL-MAIN","20MH","C01","101-200,251-300,009-100"],
-        ["49VU","FLIGHT CONTROLS/SEC1/NORM/SPLY","21CE1","B08","ALL"],
-        ["121VU","FLIGHT CONTROLS/SEC2/SPLY","21CE2","Q18","ALL"],
-        ["2000VU","PES-MUSIC-CTL","21MK","D01","009-100,111-118,125-200,251-300"],
-        ["49VU","EIS/DMC1/SWTG","21WT1","E09","ALL"],
-        ["105VU","FLT CTL/SEC1/STBY SPLY","22CE","B01","ALL"],
-        ["49VU","EIS/PFD CAPT/SWTG","22WT1","E04","ALL"],
-        ["105VU","NAV/STBY/INST/BAT","23FN","J01","ALL"],
-        ["49VU","COM/CVR/SPLY","23RK","E14","101-203,205-208,301-400"],
-        ["49VU","EIS/ND CAPT/SWTG","23WT1","E02","ALL"],
-        ["49VU","EIS/ECAM DU/UPPER/SWTG","24WT1","E06","ALL"],
-        ["2001VU","VACU TOIL SYS-LAV PWR-A","32MG","A01","ALL"],
-        ["2001VU","VACU TOIL SYS-VACU-GEN","33MG","A08","401-500,009-203,205-208,251-400"],
-        ["49VU","RCDR1 CVR&FDR","40TU","E14","401-500"]
-    ];
-    let cbItems = [...cbItemsRaw];
-    
-    // 自動為每個CB判定引擎適用性 (CEO / NEO / both)
-    function determineEngineType(rangeStr) {
-        if(rangeStr === "ALL") return "both";
-        let ceo = false, neo = false;
-        let parts = rangeStr.split(',');
-        for(let p of parts){
-            p = p.trim();
-            let s,e;
-            if(p.includes('-')){ [s,e] = p.split('-').map(Number); }
-            else { s = e = Number(p); }
-            if(isNaN(s)) continue;
-            if((s<=300 && e>=9) && !(s>300)) ceo = true;
-            if((s>=301) || (e>=301 && s<=500)) neo = true;
-            if((s<=208 && e>=9) || (s>=251 && s<=300)) ceo = true;
-            if(s>=301 && s<=500) neo = true;
+320-232 B-50001 V2527-A5 053 051-100
+
+320-232 B-50005 V2527-A5 054 051-100
+
+320-232 B-50006 V2527-A5 055 051-100
+
+320-232 B-50008 V2527-A5 056 051-100
+
+320-232 B-50011 V2527-A5 057 051-100
+
+320-232 B-50015 V2527-A5 058 051-100
+
+320-232 B-50017 V2527-A5 059 051-100
+
+320-232 B-50016 V2527-A5 060 051-100
+
+320-232 B-50018 V2527-A5 061 051-100
+
+320-271N B-50021 PW1127G-JM 101 101-150
+
+320-271N B-50022 PW1127G-JM 102 101-150
+
+320-271N B-50023 PW1127G-JM 103 101-150
+
+320-271N B-50025 PW1127G-JM 104 101-150
+
+320-271N B-50026 PW1127G-JM 105 101-150
+
+320-271N B-50027 PW1127G-JM 106 101-150
+
+320-271N B-50028 PW1127G-JM 107 101-150
+
+320-271N B-50029 PW1127G-JM 108 101-150
+
+320-271N B-50031 PW1127G-JM 109 101-150
+
+320-271N F-WWIZ PW1127G-JM 110 101-150
+
+320-271N PW1127G-JM 111 101-150
+
+320-271N PW1127G-JM 112 101-150
+
+24-50-00-00 CONF 00 - AC ELECTRICAL LOAD DISTRIBUTION - DESCRIPTION AND
+OPERATION
+
+4.
+
+Interface
+
+** ON A/C FSN ALL
+
+C.
+
+Circuit Breakers Data Tables by Circuit
+
+PANEL DESIGNATION FIN CLIPPED LOCATION
+
+49VU FLIGHT CONTROLS/SLT FLP/1 POS/IND 1CN B12
+
+122VU ANTI ICE/PROBES/1/TAT 1DA1 Z12
+
+122VU ANTI ICE/PROBES/2/TAT 1DA2 Y15
+
+** ON A/C FSN 053-111
+
+49VU ANTI ICE/RAIN/RPLNT/CAPT 1DB1 D01
+
+** ON A/C FSN 112-150
+
+49VU ANTI ICE/RAIN/RPLNT/CAPT 1DB1 C D01
+
+** ON A/C FSN 053-111
+
+122VU ANTI ICE/RAIN/RPLNT/F/O 1DB2 W11
+
+** ON A/C FSN 112-150
+
+122VU ANTI ICE/RAIN/RPLNT/F/O 1DB2 C W11
+
+** ON A/C FSN ALL
+
+123VU ANTI ICE/L/WSHLD 1DG1 AF10
+
+123VU ANTI ICE/R/WSHLD 1DG2 AF03
+
+49VU ANTI ICE/WING/MONG 1DL C01
+
+122VU ANTI ICE/ENG/1 1DN1 X10
+
+122VU ANTI ICE/ENG/2 1DN2 W10
+
+122VU DUMMY CB 1DR X15
+
+** ON A/C FSN 053-100
+
+2000VU WASTE WIP-DRAIMNMAST-FWD 1DU B06
+
+** ON A/C FSN 109-150
+
+2000VU WASTE WIP-DRAINMAST-FWD 1DU B02
+
+** ON A/C FSN 101-108
+
+2000VU DRAINMAST-FWD 1DU B02
+
+** ON A/C FSN 053-100, 109-150
+
+2000VU POT/WASTE WIP-HEATER-LINE 1DW A02
+
+** ON A/C FSN 101-108
+
+2000VU POT WIP-HEATER-LINE 1DW A02
+
+** ON A/C FSN ALL
+
+121VU ENG1/REV/LOCK 1EG1 N44
+
+121VU ENG2/REV/LOCK 1EG2 N45
+
+** ON A/C FSN 053-100
+
+121VU ENGINE/ENG1/OIL/QTY 1EN1 N39
+
+121VU ENGINE/ENG2/OIL/QTY/AND REV SNSR/CHAN B 1EN2 N41
+
+121VU ENGINE/ENG1 AND 2/EVMU 1EV R44
+
+** ON A/C FSN ALL
+
+49VU L/G/LGCIU/SYS1/NORM 1GA C09
+
+121VU HYDRAULIC/BRAKING AND STEERING/SYS1/CTL 1GG M34
+
+121VU HYDRAULIC/BRK FAN/WHEELS/1 AND 2 1GS L32
+
+121VU DUMMY CB 1GV M31
+
+121VU HYDRAULIC/BRK/TEMP/DET/UNIT 1GW M37
+
+122VU AIR COND/RECIRC FAN/L/SPLY 1HG X18
+
+49VU AIR COND/CAB/PRESS/CTL1 1HL D09
+
+123VU AVNCS VENT/BLOWER/FAN 1HQ AD10
+
+49VU OXYGEN/CREW/OXY/SPLY 1HT HA01
+
+122VU AIR BLEED/X FEED VALVE/NORM 1HV Z20
+
+122VU CSAS / CTRL 1HW U17
+
+49VU AIR COND/RAM/AIR/INLET 1HZ D10
+
+49VU ENGINE/1 AND 2/IGN/SYS A 1JH A03
+
+49VU ENGINE/1/HP FUEL SOV 1KC1 A01
+
+49VU ENGINE/2/HP FUEL SOV 1KC2 A02
+
+121VU APU/ECB/SPLY 1KD L41
+
+** ON A/C FSN 053-058, 060-060
+
+121VU DUMMY CB 1KT K41
+
+** ON A/C FSN ALL
+
+122VU LIGHT/EXT LT NAV1/AND LOGO/LT 1LA T03
+
+122VU LIGHTING/LANDING LT/L/SPLY 1LB T04
+
+122VU LIGHTING/EXT LT/RWY TURN OFF/L 1LC1 W06
+
+122VU LIGHTING/EXT LT/RWY TURN OFF/R 1LC2 W05
+
+49VU LIGHTING/EMER LT/CKPT/DOME 1LE H08
+
+49VU LIGHTING/STBY/COMP/LIGHT 1LF H04
+
+** ON A/C FSN 053-100, 103-150
+
+2001VU LIGHT-SEC19 1LJ E07
+
+** ON A/C FSN 101-102
+
+2001VU LIGHT/SEC19 1LJ F05
+
+** ON A/C FSN ALL
+
+2000VU AIR CONDTN-COMPT-OUTLET 1LK G08
+
+122VU LIGHTING/WHL WELL/LTG/OUT 1LL X07
+
+** ON A/C FSN 053-108
+
+2000VU LIGHT-LAV 1LQ J01
+
+** ON A/C FSN 109-150
+
+2000VU LIGHT-LAV-AC 1LQ J07
+
+** ON A/C FSN ALL
+
+122VU LIGHTING/EXT LT/TAXI AND TAKE OFF/TAXI 1LR W08
+
+122VU LIGHTING/AVNCS COMPT/DOME 1LS Z07
+
+** ON A/C FSN 107-150
+
+2000VU LIGHT-CARGO COMPT-FWD 1LU G05
+
+** ON A/C FSN 053-106
+
+2000VU LIGHT-CARGO COMPT-FWD 1LU J06
+
+** ON A/C FSN ALL
+
+122VU LIGHTING/EXT LT/BEACON/UPPER 1LV U06
+
+** ON A/C FSN 053-108
+
+2000VU PASSENGER READING LIGHT 1LW G01
+
+** ON A/C FSN ALL
+
+122VU LIGHTING/EXT LT/WING/AND ENG SCAN/R 1LX W03
+
+122VU LIGHTING/LOGO/R 1LY V02
+
+** ON A/C FSN 109-150
+
+2000VU LIGHT-ATTND-WORK 1LZ J08
+
+** ON A/C FSN 053-108
+
+2000VU LIGHT-ATTND-WORK 1LZ J03
+
+** ON A/C FSN ALL
+
+2000VU WATER SYSTEM-QUANT-IND 1MA B01
+
+** ON A/C FSN 109-150
+
+2000VU LAV FWD-HOT WATER-A 1MB F02
+
+** ON A/C FSN 053-108
+
+2000VU LAV FWD & MID-HOT WATER-A 1MB F02
+
+123VU FWD GALLEY/FEEDER C 1MC AE10
+
+** ON A/C FSN 109-150
+
+123VU FWD GALLEY/FEEDER C 1MC
+
+** ON A/C FSN 053-100
+
+2000VU VACUUM CLEANER SKT-CAB-Z222 1ME F07
+
+** ON A/C FSN 101-150
+
+2000VU VACU CLEANER SKT-CAB-Z222 1ME F07
+
+** ON A/C FSN ALL
+
+122VU DOORS/CARGO/DOORS/CTL 1MJ T12
+
+2001VU WATER-SYS-DRAIN 1MP B05
+
+122VU DOORS CKPT LOCK 1MQ T13
+
+122VU COCKPIT SEATS/SEAT CTL/CAPT 1MS1 U11
+
+122VU COCKPIT SEATS/SEAT CTL/F/O 1MS2 U14
+
+121VU PILOTS OUTLETS/STAT INV 1NA K25
+
+106VU EMER/SHED/CNTOR/SPLY 1PH C07
+
+125VU 101PP/SPLY 1PN1 CD01
+
+124VU 202PP/SPLY 1PN2 BG01
+
+122VU ELEC/REFLNG/ON/BAT 1PR U28
+
+124VU SVCE/601PP/602PP/SPLY 1PX BB01
+
+121VU FUEL/L WING TK/PUMP1 SPLY 1QA N23
+
+121VU APU/FUEL/BLOW OFF/CTL 1QC K39
+
+121VU FUEL/X FEED/VALVE/MOT2 1QE M24
+
+121VU APU/FUEL/LP VALVE/CTL 1QF M40
+
+49VU FUEL/LP VALVE/MOT1/ENG1 1QG A08
+
+121VU FUEL/HI/LVL/SPLY 1QJ L25
+
+** ON A/C FSN 054-150
+
+121VU FUEL/CTR TK/L&R XFR/CTL & IND 1QL R25
+
+** ON A/C FSN ALL
+
+49VU FUEL/XFR VALVE1/WING/L 1QP A10
+
+49VU FUEL/FQI/CHAN/1 1QT A13
+
+121VU FUEL/RFL/DFL/XFR/DEFUEL/VALVE 1QU L23
+
+49VU HF1 1RE1 HA14
+
+** ON A/C FSN 053-108
+
+121VU COM NAV/HF2 1RE2 C L13
+
+** ON A/C FSN 053-100
+
+49VU NAV/ADF/1 1RP1 H14
+
+** ON A/C FSN 101-150
+
+49VU NAV/ADF/1 1RP1 F09
+
+** ON A/C FSN 053-100, 109-150
+
+121VU COM NAV/ADF/2 1RP2 K02
+
+** ON A/C FSN 101-108
+
+121VU COM NAV/ADF/2 1RP2 C K02
+
+** ON A/C FSN ALL
+
+121VU COM NAV/RAD ALTM/1 1SA1 K11
+
+121VU COM NAV/RAD ALTM/2 1SA2 K12
+
+49VU NAV/DME/1 1SD1 G14
+
+121VU COM NAV/DME/2 1SD2 K06
+
+121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/A 1WE1 Q43
+
+121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL2/SQUIB/A 1WE2 Q41
+
+121VU APU/FIRE/EXTIG/SQUIB/A 1WF L38
+
+121VU APU/FIRE AND OVHT/DET/LOOP A 1WG L43
+
+** ON A/C FSN 053-108
+
+2000VU LAV FWD-OCCUPIED 1WJ F01
+
+** ON A/C FSN 109-150
+
+2000VU LAV FWD & MID-OCCUPIED 1WJ F01
+
+** ON A/C FSN ALL
+
+49VU LIGHTING/EMER LT/CABIN 1WL H05
+
+49VU OXYGEN/PASSENGER/CTL AND WARN 1WR HA02
+
+** ON A/C FSN 101-106
+
+122VU AIR COND/CARGO/FIRE/EXTIG 1WX T19
+
+** ON A/C FSN 053-100, 107-150
+
+49VU AIR COND/CARGO FIRE/EXTIG/BTL1 1WX C03
+
+** ON A/C FSN ALL
+
+122VU ELEC/GALY & CAB/CTL 1XA S26
+
+123VU AC ESS/BUS ON/BUS 1 1XC AC12
+
+106VU AC/SHED/ESS BUS/CNTOR/CTL 1XH C04
+
+123VU BUS 1/101XP/SPLY 1XN1 AD11
+
+123VU BUS 2/202XP/SPLY 1XN2 AD02
+
+122VU ELEC/IDG1/DISC 1XT T24
+
+123VU TR2/SVCE/BUS 2/SPLY 1XX AB08
+
+121VU FLIGHT CONTROLS/SLT FLP/2POS/IND 2CN P16
+
+49VU ANTI ICE/PROBES/PHC/1 2DA1 D03
+
+122VU ANTI ICE/PROBES/PHC/2 2DA2 Y12
+
+122VU ANTI ICE/PROBES/PHC/3 2DA3 Y16
+
+49VU ANTI ICE/WING/CTL 2DL C02
+
+** ON A/C FSN 101-108
+
+2000VU POT WIP-HEATER-CTL 2DW A01
+
+** ON A/C FSN 053-100, 109-150
+
+2000VU POT/WASTE WIP-HEATER-CTL 2DW A01
+
+** ON A/C FSN 053-100
+
+121VU ENGINE/ENG1/OIL/PRESS/AND REV SNSR/CHAN A 2EN1 N40
+
+121VU ENGINE/ENG2/OIL/PRESS/AND REV SNSR/CHAN A 2EN2 N42
+
+** ON A/C FSN ALL
+
+121VU HYDRAULIC/LGCIU/SYS2 2GA Q35
+
+121VU HYDRAULIC/BRAKING AND STEERING/SYS1/IND AND/SPLY 2GG M33
+
+121VU HYDRAULIC/BRK FAN/WHEELS/3 AND 4 2GS L35
+
+** ON A/C FSN 053-100
+
+49VU AIR BLEED/ENG 1/MONG 2HA1 D11
+
+** ON A/C FSN 101-150
+
+49VU AIR BLEED/ENG 1/CTL 2HA1 D11
+
+** ON A/C FSN 053-100
+
+122VU AIR BLEED/ENG 2/MONG 2HA2 Z22
+
+** ON A/C FSN 101-150
+
+122VU AIR BLEED/ENG 2/CTL 2HA2 Z22
+
+** ON A/C FSN ALL
+
+122VU AIR COND/RECIRC FAN/L/CTL 2HG X20
+
+122VU AIR COND/CAB PRESS/CTL/2 2HL Y22
+
+123VU AVNCS VENT/EXTC/FAN 2HQ AE02
+
+49VU AIR BLEED/X FEED/VALVE/BAT 2HV D13
+
+** ON A/C FSN 053-100
+
+121VU ENGINE/IGN/ENG1/SYS A BAT 2JH1 P39
+
+121VU ENGINE/IGN/ENG2/SYS A BAT 2JH2 P40
+
+** ON A/C FSN 053-106
+
+121VU APU/APU/CTL 2KD L42
+
+** ON A/C FSN 107-150
+
+121VU APU/CTL 2KD L42
+
+** ON A/C FSN ALL
+
+49VU ENGINE/1/FADEC A/AND EIU 1 2KS1 A04
+
+49VU ENGINE/2/FADEC A/AND EIU 2 2KS2 A05
+
+122VU LIGHTING/EXT LT/NAV2/AND LOGO/LT 2LA T02
+
+122VU LIGHTING/LANDING LT/R/SPLY 2LB T06
+
+122VU LIGHTING/FLOOD/CTR INST/PNL 2LE Z04
+
+** ON A/C FSN 053-100, 103-150
+
+2001VU LIGHT-APU 2LJ E08
+
+** ON A/C FSN 101-102
+
+2001VU LIGHT-APU 2LJ F06
+
+** ON A/C FSN ALL
+
+122VU LIGHTING/WHL WELL/LTG/DOME 2LL X08
+
+122VU LIGHTING/EXT LT/TAXI AND TAKE OFF/CTL 2LR W09
+
+** ON A/C FSN 107-150
+
+2000VU LIGHT-CARGO COMPT-AFT 2LU G06
+
+** ON A/C FSN 053-106
+
+2000VU LIGHT-CARGO COMPT-AFT 2LU J07
+
+** ON A/C FSN 053-108
+
+2000VU PASSENGER READING LIGHT 2LW G02
+
+** ON A/C FSN ALL
+
+122VU LIGHTING/LOGO/L 2LY V03
+
+** ON A/C FSN 109-150
+
+2001VU LAV AFT-HOT WATER-D 2MB B02
+
+** ON A/C FSN 053-108
+
+2001VU LAVATORY AFT-HOT WATER-D 2MB B02
+
+** ON A/C FSN 101-150
+
+123VU FWD GALLEY/FEEDER D 2MC AD04
+
+** ON A/C FSN 053-100
+
+123VU FWD GALLEY/FEEDER D 2MC C AD04
+
+** ON A/C FSN ALL
+
+121VU PILOTS OUTLETS/115V 60HZ 2NA K23
+
+122VU ELEC/REFLNG/NORM 2PR S27
+
+123VU TR1/SPLY 2PU1 AB10
+
+123VU TR2/214XP/SPLY 2PU2 AB04
+
+121VU FUEL/R WING TK/PUMP1 SPLY 2QA Q23
+
+49VU APU/FUEL/BLOW OFF/PUMP 2QC B14
+
+49VU FUEL/X FEED/VALVE/MOT1 2QE A12
+
+121VU APU/FUEL/LP VALVE/SPLY 2QF M39
+
+49VU FUEL/LP VALVE/MOT1/ENG2 2QG A09
+
+** ON A/C FSN 054-150
+
+121VU FUEL/CTR TK/L&R XFR/CTL & IND 2QL R26
+
+** ON A/C FSN ALL
+
+49VU FUEL/XFR VALVE1/WING/R 2QP A11
+
+121VU FUEL/FQI/CHAN/2 2QT M27
+
+121VU FUEL/RFL/DFL/SPLY 2QU L24
+
+49VU COM/VHF/1 2RC1 G09
+
+121VU COM NAV/VHF/2 2RC2 L04
+
+121VU COM NAV/VHF/3 2RC3 L05
+
+** ON A/C FSN 053-104
+
+49VU COM/RMP/1 2RG1 G10
+
+121VU COM NAV/RMP/2 2RG2 L02
+
+** ON A/C FSN 053-100
+
+121VU COM NAV/RMP/3 2RG3 C L03
+
+** ON A/C FSN 101-104
+
+121VU COM NAV/RMP/3 2RG3 L03
+
+** ON A/C FSN 053-055
+
+49VU COM/CVR/SPLY 2RK E14
+
+** ON A/C FSN 053-106
+
+49VU NAV/VOR/1 2RS1 G13
+121VU COM NAV/VOR/2 2RS2 K08
+** ON A/C FSN ALL
+121VU CFDS/CFDIU/SPLY 2TW J18
+121VU EIS/HORN/SPLY 2WC P09
+** ON A/C FSN 053-100
+121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/B 2WE1 Q44
+** ON A/C FSN 101-150
+121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL2/SQUIB/B 2WE1 Q44
+** ON A/C FSN 053-100
+121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL2/SQUIB/B 2WE2 Q42
+** ON A/C FSN 101-150
+121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/B 2WE2 Q42
+** ON A/C FSN ALL
+121VU APU/FIRE/EXTIG/SQUIB/B 2WF L39
+121VU APU/FIRE AND OVHT/DET/LOOP B 2WG L44
+49VU LIGHTING/EMER LT/CABIN 2WL H06
+49VU OXYGEN/PASSENGER/CTL AND WARN 2WR HA03
+121VU EIS/SDAC/2/SPLY 2WV Q06
+121VU EIS/FWC2/SPLY 2WW Q07
+121VU EIS/GPWS/28VDC 2WZ P06
+123VU AC ESS/BUS ON/BUS 2 2XC AC01
+123VU GND/PWR/PROT 2XG AB07
+106VU AC ESS BUS/MONG/SPLY 2XH C05
+122VU ELEC/IDG2/DISC 2XT T25
+122VU ELEC/GCU/1 2XU1 T26
+122VU ELEC/GCU/2 2XU2 T27
+123VU SVCE/BUS 2/212XP SPLY 2XX AB05
+49VU ANTI ICE/PROBES/PITOT/1 3DA1 D02
+122VU ANTI ICE/PROBES/2/PITOT 3DA2 Y14
+122VU ANTI ICE/PROBES/3/PITOT 3DA3 Z16
+121VU HYDRAULIC/BRAKING AND STEERING/SYS2/CTL 3GG M35
+121VU HYDRAULIC/BRK/FAN/CTL 3GS M32
+** ON A/C FSN 053-100
+49VU AIR BLEED/ENG 1/CTL 3HA1 D12
+** ON A/C FSN 101-150
+122VU AIR BLEED/ENG 1/MONG 3HA1 Z23
+** ON A/C FSN 053-100
+122VU AIR BLEED/ENG 2/CTL 3HA2 Z23
+** ON A/C FSN 101-150
+49VU AIR BLEED/ENG 2/MONG 3HA2 D12
+** ON A/C FSN ALL
+122VU AIR COND/RECIRC FAN/R/SPLY 3HG W18
+122VU AIR COND/CAB PRESS/CTL/MAN 3HL Y23
+122VU AIR COND/AVNCS/VENT/MONG 3HQ Y17
+121VU ENGINE/IGN/ENG1/SYS B 3JH1 P41
+121VU ENGINE/IGN/ENG2/SYS B 3JH2 P42
+122VU LIGHTING/LANDING LT/L/CTL 3LB T05
+122VU LIGHTING/CKPT/DOME 3LE Y06
+122VU LIGHTING/INSTL LT/OVHD/PNL 3LF Y03
+122VU LIGHTING/EXT LT/TAXI AND TAKE OFF/TO 3LR W07
+** ON A/C FSN 053-106
+2000VU LIGHT-LDG-AREA 3LU J08
+** ON A/C FSN 107-150
+2000VU LIGHT-LDG-AREA 3LU G07
+** ON A/C FSN 053-108
+2000VU PASSENGER READING LIGHT 3LW G03
+** ON A/C FSN ALL
+123VU AFT GALLEY/FEEDER A 3MC AF04
+122VU ELEC/CNTOR/ESS/DC BUS/TIE 3PC W26
+125VU 103PP/SPLY 3PN1 CE01
+124VU 204PP/SPLY 3PN2 BF01
+122VU ELEC/TR1/MONG 3PU1 X25
+122VU ELEC/TR2/MONG 3PU2 X26
+121VU FUEL/PUMPS/1/L CTL AND R IND 3QA R23
+121VU APU/FUEL/PUMP/CTL 3QC M38
+121VU FUEL/LP VALVE/MOT2/ENG1 3QG M25
+** ON A/C FSN 054-150
+121VU FUEL/CTR TK/AUTO/CTL 3QL R27
+** ON A/C FSN ALL
+121VU FUEL/XFR VALVE2/WING/L 3QP M22
+** ON A/C FSN 101-150
+121VU DATA/LOADER/SPLY 3TD J16
+** ON A/C FSN ALL
+121VU ATSU 1 3TX1 L16
+121VU APU/FIRE/LP VALVE/STBY 3WF M41
+122VU LIGHTING/CABIN/EMER/LT 3WL V07
+49VU OXYGEN/PASSENGER/CTL AND WARN 3WR HA04
+49VU SDAC/1/SPLY 3WV F04
+49VU FWS/FWC1/SPLY 3WW F01
+** ON A/C FSN 053-100
+121VU EIS/GPWS/115VAC 3WZ P07
+** ON A/C FSN 101-150
+121VU EIS/GPWS/115VAC 3WZ C P07
+** ON A/C FSN ALL
+123VU BUS 1/103XP/SPLY 3XN1 AB11
+123VU BUS 2/204XP/SPLY 3XN2 AB02
+122VU ELEC/AC PWR/SVCE/CTL 3XX V29
+49VU ANTI ICE/PROBES/AOA/1 4DA1 D04
+122VU ANTI ICE/PROBES/2/AOA 4DA2 Y13
+122VU ANTI ICE/PROBES/3/AOA 4DA3 Z15
+122VU ANTI ICE/WIPER/CAPT 4DB1 X12
+122VU ANTI ICE/F/O/WIPER 4DB2 W12
+122VU ANTI ICE/WINDOWS/L 4DG1 X14
+122VU ANTI ICE/WINDOWS/R 4DG2 W14
+49VU NAV PROBES/ADIRU1/115VAC 4FP1 F06
+121VU ADIRS/ADIRU/2/115VAC 4FP2 N06
+121VU ADIRS/ADIRU/3/115VAC 4FP3 N05
+121VU CLOCK/STBY/SPLY 4FS N02
+121VU HYDRAULIC/BRAKING AND STEERING/SYS2/SPLY 4GG M36
+122VU RPCU 4HL X23
+121VU ENGINE/ENG1/FADEC B/AND EIU 1 4KS1 R41
+** ON A/C FSN 101-150
+121VU ENGINE/ENG2/FADEC B/AND EIU2 4KS2 Q40
+** ON A/C FSN 053-100
+121VU ENGINE/ENG2/FADEC B 4KS2 Q40
+** ON A/C FSN ALL
+122VU LIGHTING/LANDING LT/R/CTL 4LB T07
+122VU LIGHTING/FLOOD/F/O/SIDE 4LE Z06
+122VU LIGHTING/INSTL LT/MAIN INST/PNL AND/PED 4LF Y04
+** ON A/C FSN 053-108
+2000VU PASSENGER READING LIGHT 4LW G04
+** ON A/C FSN ALL
+106VU ESS TR/SPLY 4PE C01
+122VU ELEC/RFL/SPLY/LOGIC 4PR U29
+125VU TR1/CNTOR/SPLY 4PU1 CF01
+124VU TR2/CNTOR/SPLY 4PU2 BC01
+121VU FUEL/PUMPS/1/R CTL AND L IND 4QA R28
+121VU FUEL/LP VALVE/MOT2/ENG2 4QG M26
+121VU FUEL/XFR VALVE2/WING/R 4QP M23
+** ON A/C FSN 053-055
+49VU COM/CVR/CTL 4RK E13
+** ON A/C FSN 053-104
+49VU COM/ACP CAPT/SELCAL/INT 1 AUDIO/AVNCS 4RN G06
+** ON A/C FSN 053-100
+121VU COM NAV/TCAS 4SG K10
+** ON A/C FSN ALL
+121VU APU/FIRE/LP VALVE/NORM 4WF M42
+49VU OXYGEN/PASSENGER/ACTUATION 4WR HA05
+** ON A/C FSN 053-104
+121VU EIS/F/O/LOUD/SPKR 4WW P08
+** ON A/C FSN ALL
+106VU AC ESS/BUS NORM/CNTOR/CTL 4XC B03
+122VU ELEC/EXT PWR/LT CLT/AVAIL 4XG X31
+106VU 26VAC/ESS BUS/SPLY 4XH B06
+123VU SVCE/BUS 2/214XP SPLY 4XX AA05
+49VU AUTO FLT/FAC1/28VDC 5CC1 B04
+121VU AUTO FLT/FAC2/28VDC 5CC2 M19
+49VU FLIGHT CONTROLS/SLT/CTL AND MONG/SYS1 5CV B06
+122VU ANTI ICE/PROBES/1/STATIC 5DA1 Z13
+122VU ANTI ICE/PROBES/2/STATIC 5DA2 Y11
+122VU ANTI ICE/PROBES/3/STATIC 5DA3 Z14
+122VU ANTI ICE/WHC/1 5DG1 X13
+122VU ANTI ICE/WHC/2 5DG2 W13
+49VU NAV/STBY/INST 5FN F12
+49VU NAV PROBES/ADIRU 1/AND AOA 1/26VAC 5FP1 F07
+121VU ADIRS/ADIRU/2/26VAC AND AOA 5FP2 N08
+121VU ADIRS/ADIRU/3/26VAC AND AOA 5FP3 N07
+49VU AIR COND/AVNCS VENT/CTL 5HQ D05
+122VU AIR COND/LAV/GALLEY VENT CTL/EXTRACT FAN/CTL 5HU U21
+122VU LIGHTING/FLOOD/CAPT/SIDE 5LE Z05
+122VU LIGHTING/INSTL LT/GLARE/SHLD 5LF Y05
+122VU LIGHTING/EXT LT/BEACON/LOWER 5LV U03
+** ON A/C FSN 053-108
+2000VU PASSENGER READING LIGHT 5LW G05
+** ON A/C FSN ALL
+122VU LIGHTING/EXT LT/WING/AND ENG SCAN/L 5LX W02
+2001VU VACU CLEANER SKT-CAB-Z261 5ME F06
+105VU ELEC/HOT BUS/701PP SPLY 5PB1 D01
+105VU ELEC/HOT BUS/702PP SPLY 5PB2 D02
+106VU ESS TR/CNTOR/CTL 5PE C02
+122VU ELEC/DC/SVCE/BUS 5PN X24
+122VU ELEC/DC SVCE/BUS/ON TR2 5PX U30
+** ON A/C FSN 053-104
+49VU COM/ACP F/O/BITE/INT2 AUDIO/3&5 OCCPNT 5RN G07
+** ON A/C FSN ALL
+49VU COM NAV/ATC/1 5SH1 G11
+** ON A/C FSN 053-100
+121VU COM NAV/ATC/2 5SH2 K07
+** ON A/C FSN ALL
+121VU COM NAV/RADAR/1 5SQ1 K13
+** ON A/C FSN 101-150
+121VU COM NAV/RADAR/2 5SQ2 K14
+** ON A/C FSN 053-100, 107-150
+121VU DLS&/DLRB/SPLY 5TD J15
+** ON A/C FSN 101-106
+121VU DLSU &/DLRB/SPLY 5TD J15
+** ON A/C FSN ALL
+121VU AIDS & RCDR/FDIMU 5TV K15
+121VU ATSU 1/SWTG 5TX1 L15
+49VU OXYGEN/PASSENGER/ACTUATION 5WR HA06
+49VU SDAC/1/26VAC SYNC/AC ESS BUS 5WV F02
+** ON A/C FSN 053-104
+49VU CAPT/LOUD/SPKR 5WW F10
+** ON A/C FSN ALL
+106VU AC ESS BUS/STBY/CNTOR/CTL 5XC B08
+106VU AC ESS BUS/EMER/CNTOR/CTL 5XE B07
+123VU BUS 1/131XP-A/SPLY 5XN1 AB12
+123VU BUS 2/231XP-A/SPLY 5XN2 AB01
+122VU ELEC/GEN1/OFF/BTC1 SPLY 5XU T28
+49VU FLIGHT CONTROLS/FLP/CTL AND MONG/SYS1 6CV B07
+105VU ADIRS/ADIRU1/28VDC 6FP1 C02
+121VU ADIRS/ADIRU/2/28VDC 6FP2 N04
+121VU ADIRS/ADIRU/3/28VDC 6FP3 N03
+49VU CLOCK/NORM/SPLY 6FS F11
+49VU AIR COND/AVNCS VENT/CTL 6HQ D06
+122VU AIR COND/LAV/GALLEY VENT CTL/EXTRACT FAN/SPLY 6HU U19
+** ON A/C FSN 053-108
+2000VU PASSENGER READING LIGHT 6LW G06
+** ON A/C FSN ALL
+124VU 206PP/208PP/SPLY 6PN BE01
+** ON A/C FSN 053-104
+121VU COM NAV/ACP/THIRD/OCCPNT 6RN M02
+** ON A/C FSN 109-150
+121VU PRINTER/SPLY 6TW J21
+** ON A/C FSN 053-108
+121VU PTR/SPLY 6TW J21
+** ON A/C FSN 053-100
+PRE SB 46-1210 for A/C 054-054
+121VU DCDU 1 6TX1 C L17
+** ON A/C FSN 101-150
+POST SB 46-1210 for A/C 054-054
+121VU DCDU 1 6TX1 L17
+** ON A/C FSN 053-100
+PRE SB 46-1210 for A/C 054-054
+121VU DCDU 2 6TX2 C L18
+** ON A/C FSN 101-150
+POST SB 46-1210 for A/C 054-054
+121VU DCDU 2 6TX2 L18
+** ON A/C FSN ALL
+49VU OXYGEN/PASSENGER/ACTUATION 6WR HA07
+49VU SDAC/2/26VAC SYNC/AC ESS BUS 6WV F03
+122VU ESS NTWK AUTO ALTN 6XC V24
+106VU CSM/G /EV/MAN/SPLY 6XE B04
+122VU ELEC/EXT PWR/LT CLT/NOT IN/USE 6XG X30
+49VU ELEC/AC BUS/8XP/MONG 6XH H11
+121VU FLIGHT CONTROLS/SLT/CTL/SYS2 7CV R21
+122VU ELEC/GALLEY/CNTOR 7MC S28
+122VU ELEC/TR1/FAULT/DC BUS TIE/CONFIG 7PC1 W29
+122VU ELEC/TR2/FAULT/DC BUS TIE/CONFIG 7PC2 W30
+124VU DC SVCE/602PP/SPLY 7PN BD01
+121VU FUEL/L WING TK/PUMP2 SPLY 7QA N26
+** ON A/C FSN 053-104
+121VU COM NAV/ACP/AVNCS/COMPT 7RN C M03
+** ON A/C FSN 053-100
+121VU RCDR/DFDR 7TU K16
+** ON A/C FSN ALL
+49VU ENGINE/1/FIRE DET/LOOP A 7WD1 A06
+121VU ENGINE/ENG2/FIRE DET/LOOP A 7WD2 Q39
+49VU OXYGEN/PASSENGER/ACTUATION 7WR HA08
+121VU EIS/SDAC/1/BUS2/26VAC SYNC AC 7WV Q03
+122VU ELEC/GALY & CAB/GND/FLT/LOGIC 7XA S24
+105VU ELEC/CSM/G /EV AUTO/SPLY 7XE C01
+122VU ELEC/GPCU 7XG C Y24
+123VU BUS 1/110XP/SPLY 7XN1 AF11
+123VU BUS 2/210XP/SPLY 7XN2 AF02
+121VU IGGS/CTLR 7YA N28
+121VU FLIGHT CONTROLS/FLP/CTL AND/MONG/SYS2 8CV Q21
+** ON A/C FSN 053-100
+49VU NAV PROBES/ADIRU3/PWR/SWTG 8FP F09
+** ON A/C FSN 101-150
+49VU NAV PROBES/ADIRU3/PWR/SWTG 8FP F08
+** ON A/C FSN ALL
+105VU ELEC/BAT BUS/REF/BCL1 8PB1 G01
+105VU ELEC/BAT BUS/REF/BCL2 8PB2 J02
+121VU FUEL/R WING TK/PUMP2 SPLY 8QA Q26
+121VU FUEL/FQI/CHANNEL/1 AND 2 8QT L26
+** ON A/C FSN 053-104
+121VU COM NAV/SELCAL 8RN M04
+** ON A/C FSN ALL
+121VU CFDS/CFDIU/BACK/UP 8TW J17
+121VU ENGINE/ENG1/FIRE DET/LOOP B 8WD1 Q38
+49VU ENGINE/2/FIRE DET/LOOP B 8WD2 A07
+121VU EIS/SDAC/2/BUS2/26VAC SYNC AC 8WV Q02
+** ON A/C FSN 053-100, 107-150
+49VU AIR COND/CARGO FIRE/EXTIG/BTL2 8WX C04
+** ON A/C FSN ALL
+122VU ELEC/GALY & CAB/FAULT/LT CTL 8XA S25
+122VU ELEC/COML/SHED/SYS2 8XN V28
+122VU ELEC/GEN2/OFF/BTC2 SPLY 8XU T31
+49VU AUTO FLT/FCU/1 9CA1 B05
+121VU AUTO FLT/FCU/2 9CA2 M21
+122VU FLIGHT CONTROLS/WTB/SLT/SYS1 9CV S06
+121VU ADIRS/ADIRU/3SWTG/SPLY 9FP N09
+2001VU LAV AFT-HOT WATER-E 9MB B03
+105VU ELEC/BAT REF/BCL1 9PB1 F01
+105VU ELEC/BAT REF/BCL2 9PB2 F02
+122VU ELEC/CNTOR/DC/BUS/TIE1 9PC W25
+122VU ELEC/DC SHED BUS/CNTR 9PN U26
+121VU FUEL/PUMPS/2/L CTL AND R IND 9QA R24
+** ON A/C FSN 053-104
+49VU COM/INT/1+2 9RN G08
+** ON A/C FSN ALL
+121VU RCDR/ACCLRM 9TU K18
+121VU CFDS/TEST PLUG/1 9TW J19
+122VU ELEC/EMER GEN AUTO/2 9XE Z26
+122VU ELEC/COML/SHED/SYS1 9XN V26
+49VU AUTO FLT/FMGC/1 10CA1 B02
+121VU AUTO FLT/FMGC/2 10CA2 M17
+122VU FLIGHT CONTROLS/WTB/FLP/SYS1 10CV S07
+121VU ADIRS/ADIRU/2PWR/SHED 10FP N10
+** ON A/C FSN 101-150
+121VU OIL/PRESS/ENG1 10KC1 N40
+121VU OIL/PRESS/ENG2 10KC2 N42
+** ON A/C FSN ALL
+122VU LIGHTING/WING/STROBE 10LV V05
+** ON A/C FSN 109-150
+2000VU LAV FWD & MID-HOT WATER 10MB C F03
+** ON A/C FSN ALL
+106VU 802PP SPLY 10PH B09
+121VU FUEL/PUMPS/2/R CTL AND L IND 10QA R29
+121VU CFDS/TEST PLUG/2 10TW J20
+49VU EIS/DMC1/SPLY 10WT1 E11
+121VU EIS/DMC2/SPLY 10WT2 Q08
+121VU EIS/DMC3/SPLY 10WT3 Q09
+121VU EIS/SDAC/2/BUS1/26VAC SYNC AC 10WV Q05
+106VU AC ESS BUS/EMER/STBY/CNTOR/SPLY 10XE C06
+123VU BUS 2/212XP/SPLY 10XN AD03
+49VU AUTO FLT/MCDU/1 11CA1 B01
+121VU AUTO FLT/MCDU/2 11CA2 N20
+121VU FLIGHT CONTROLS/WTB/SLT/SYS2 11CV P19
+** ON A/C FSN 053-100
+122VU ANTI ICE/PROBES/P2/T2/ENG1 11DA1 Z10
+122VU ANTI ICE/PROBES/P2/T2/ENG2 11DA2 Y10
+** ON A/C FSN ALL
+2001VU WASTE WIP-DRAINMAST-AFT 11DU E01
+122VU AIR COND/RECIRC FAN/R/CTL 11HG W20
+** ON A/C FSN 101-150
+49VU AIR BLEED/APU BLEED VLV CTL/BMC1 OVRD 11HV D14
+** ON A/C FSN ALL
+122VU LIGHTING/AVNCS COMPT/OUT/28VDC 11LS Z08
+** ON A/C FSN 109-150
+2000VU PAX READING LIGHT-FWD-LH 11LW G01
+** ON A/C FSN ALL
+125VU BAT BUS/301PP/SPLY 11PB CC01
+124VU SHED BUS 210PP/212PP/SPLY 11PN BA01
+123VU L WING TK/PUMP 1/STBY SPLY 11QA AD12
+** ON A/C FSN 109-150
+2001VU LAV AFT-OCCUPIED 11WJ B04
+** ON A/C FSN 053-108
+2001VU LAVATORY AFT-OCCUPIED 11WJ B04
+** ON A/C FSN ALL
+49VU EIS/PFD/CAPT/SPLY 11WT1 E03
+121VU EIS/PFD/F/O 11WT2 R03
+122VU ELEC/EMER GEN AUTO/1 11XE Z25
+122VU ELEC/EXT PWR/CTL 11XG X29
+121VU FLIGHT CONTROLS/WTB/FLP/SYS2 12CV P20
+** ON A/C FSN 101-150
+122VU AIR BLEED/APU BLEED VLV CTL/BMC2 OVRD 12HV Z19
+** ON A/C FSN ALL
+122VU LIGHTING/AVNCS COMPT/OUT/115VAC 12LS Z09
+** ON A/C FSN 109-150
+2000VU PAX READING LIGHT-FWD-RH 12LW G02
+** ON A/C FSN 053-100
+123VU AFT GALLEY/FEEDER B 12MC AD09
+** ON A/C FSN 101-108
+123VU AFT GALLEY/FEEDER B 12MC C AD09
+** ON A/C FSN 109-150
+123VU AFT GALLEY/FEEDER B 12MC C
+** ON A/C FSN ALL
+105VU ELEC/HOT BUS/701PP SPLY 12PB1 E01
+105VU ELEC/HOT BUS/702PP SPLY 12PB2 E02
+123VU R WING TK/PUMP 1/STBY SPLY 12QA AE12
+49VU EIS/ND CAPT/SPLY 12WT1 E01
+121VU EIS/ND/F/O 12WT2 R04
+49VU SDAC/1 AND 2/28VDC/ESS BUS 12WV F05
+105VU ELEC/STAT INV/BUS 901XP/SPLY 12XB H02
+121VU AUTO FLT/STICK/LOCK 13CA N16
+** ON A/C FSN 109-150
+2000VU PAX READING LIGHT-AFT-LH 13LW G03
+** ON A/C FSN ALL
+121VU EIS/SLIDES/ARM AND WARN/GND 13WN P10
+49VU EIS/ECAM DU/UPPER/SPLY 13WT1 E05
+** ON A/C FSN 107-150
+121VU EIS/ECAM DU/LOWER/SPLY 13WT2 R10
+** ON A/C FSN 053-106
+121VU EIS/ECAM DU/LOWER/SPLY 13WT2 R11
+** ON A/C FSN ALL
+49VU ELEC/LT/CTL 13XG H10
+121VU AUTO FLT/RUDDER/ARTF/FEEL 14CA N17
+49VU AUTO FLT/FAC1/26VAC 14CC1 B03
+121VU AUTO FLT/FAC2/26VAC 14CC2 M18
+** ON A/C FSN 109-150
+2000VU PAX READING LIGHT-AFT-RH 14LW G04
+** ON A/C FSN 053-108
+123VU AFT GALLEY/FEEDER E 14MC AF09
+** ON A/C FSN 109-150
+123VU AFT GALLEY/FEEDER E 14MC
+** ON A/C FSN ALL
+122VU ELEC/CNTOR/DC BUS/TIE 1/FAULT 14PC U24
+121VU PDL/PWR/SPLY 14TD K19
+122VU AIR COND/CIDS/SDF/DIR NORM/2 14WH T18
+49VU EIS/DMC3/STBY/SPLY 14WT1 E10
+121VU EIS/SDAC1 AND 2/BUS1/28VDC 14WV P04
+** ON A/C FSN 053-104
+121VU AUDIO MIXING 14WW K03
+** ON A/C FSN ALL
+105VU ELEC/STAT INV/CNTOR/CTL 14XB G02
+122VU ELEC/GEN1/OFF/BTC2 SPLY 14XU T30
+121VU AUTO FLT/RUDDER/TRIM/IND 15CC M20
+49VU FLIGHT CONTROLS/ELAC1/NORM/SPLY 15CE1 B11
+121VU FLIGHT CONTROLS/ELAC2/NORM/SPLY 15CE2 R20
+2001VU POT WIP-SVCE-PNL 15DV D01
+106VU AC ESS/BUS/EMER/CNTOR/SPLY 15PC C08
+122VU DOORS/CKPT/VIDEO/SPLY 15RA T16
+49VU AIR COND/CIDS/SDF/DIR1 ESS 15WH C05
+121VU EIS/SLIDES/ARM AND WARN/FLT 15WN P11
+49VU EIS/ECAM/CTL/PNL 15WT E12
+122VU ELEC/GEN2/OFF/BTC1 SPLY 15XU T29
+** ON A/C FSN 101-150
+121VU FAC1 BAT SPLY 16CC M16
+** ON A/C FSN ALL
+105VU FLT CTL/ELAC1/STBY SPLY 16CE1 A01
+105VU FLIGHT CONTROLS/ELAC2/STBY SPLY 16CE2 A02
+** ON A/C FSN 053-108
+123VU FWD GALLEY/FEEDER F 16MC AC10
+** ON A/C FSN 109-150
+123VU FWD GALLEY/FEEDER F 16MC
+** ON A/C FSN 056-100
+122VU ATSAW// CAPT// SEL & RLY 17SG1 C T08
+** ON A/C FSN 101-150
+122VU ATSAW// CAPT// SEL & RLY 17SG1 T08
+** ON A/C FSN 056-100
+122VU ATSAW// F/O// SEL & RLY 17SG2 C T09
+** ON A/C FSN 101-150
+122VU ATSAW// F/O// SEL & RLY 17SG2 T09
+** ON A/C FSN ALL
+122VU AIR COND/CIDS/SDF/DIR NORM/1 17WH T17
+122VU ELEC/GAPCU 17XG W24
+122VU ELEC/AC/BUS1/CTL 17XN1 V25
+122VU ELEC/BUS/2XP/CTL 17XN2 V27
+122VU ELEC/DC BUS/TIE2//APU/START 18PC W31
+49VU AIR COND/CIDS/SDF/DIR2 ESS 18WH C06
+121VU FLIGHT CONTROLS/THS ACTR/MOT1 19CE1 Q16
+49VU FLIGHT CONTROLS/THS/ACTR/MOT2 19CE2 B09
+121VU FLIGHT CONTROLS/THS ACTR/MOT3 19CE3 Q17
+49VU FLIGHT CONTROLS/FCDC1/SPLY 20CE1 B10
+121VU FLIGHT CONTROLS/FCDC2/SPLY 20CE2 Q20
+** ON A/C FSN 101-108
+2000VU IFE-VCC-DC 20MH C C01
+** ON A/C FSN ALL
+49VU FLIGHT CONTROLS/SEC1/NORM/SPLY 21CE1 B08
+121VU FLIGHT CONTROLS/SEC2/SPLY 21CE2 Q18
+121VU FLIGHT CONTROLS/SEC3/SPLY 21CE3 Q19
+** ON A/C FSN 061-150
+122VU CASE/HEAT/AOA1 21DA1 C V08
+122VU CASE/HEAT/AOA2 21DA2 C V16
+122VU CASE/HEAT/AOA3 21DA3 C V10
+** ON A/C FSN 101-108
+2000VU IFE-VCC-AC 21MH C C02
+2000VU IFE-IFEC-DC 21MK C C03
+** ON A/C FSN ALL
+49VU EIS/DMC1/SWTG 21WT1 E09
+121VU EIS/DMC2/SWTG 21WT2 R08
+49VU EIS/DMC3/SWTG 21WT3 E07
+105VU FLT CTL/SEC1/STBY SPLY 22CE B01
+** ON A/C FSN 061-150
+122VU AOA1/HEAT/MON 22DA1 C V09
+122VU AOA3/HEAT/MON 22DA3 C V11
+** ON A/C FSN 101-150
+121VU ICU A/ENG1 PWR SUPPLY 22KS1 R39
+121VU ICU A/ENG2 PWR SUPPLY 22KS2 R40
+** ON A/C FSN 101-108
+2000VU IFE-IFEC-AC 22MK C C04
+** ON A/C FSN ALL
+49VU EIS/PFD CAPT/SWTG 22WT1 E04
+121VU EIS/PFD/F/O/SWTG 22WT2 R05
+105VU NAV/STBY/INST/BAT 23FN J01
+** ON A/C FSN 109-150
+2001VU VACU TOIL SYS-LAV PWR-E 23MG A05
+** ON A/C FSN 056-100
+49VU COM/CVR/SPLY 23RK E14
+** ON A/C FSN ALL
+49VU EIS/ND CAPT/SWTG 23WT1 E02
+121VU EIS/ND/F/O/SWTG 23WT2 R06
+123VU APU GEN/EGIU2/115VAC 23XS AA08
+** ON A/C FSN 101-150
+122VU CASE/HEAT/AOA1/BKUP 24DA1 C V15
+** ON A/C FSN ALL
+49VU EIS/ECAM DU/UPPER/SWTG 24WT1 E06
+** ON A/C FSN 053-106
+121VU EIS/ECAM DU/LOWER/SWTG 24WT2 R10
+** ON A/C FSN 107-150
+121VU EIS/ECAM DU/LOWER/SWTG 24WT2 R09
+** ON A/C FSN ALL
+122VU LIGHTING/ANN LT SPLY/XFMR/BUS 1 26LP X04
+** ON A/C FSN 056-100
+49VU COM/CVR/CTL 26RK E13
+** ON A/C FSN ALL
+122VU ELEC/AC SHED BUS/CNTOR 26XN U25
+122VU LIGHTING/ANN LT SPLY/XFMR/BUS 2 27LP X05
+106VU EMER/GEN/REF 27WV B05
+122VU LIGHTING/ANN LT SPLY/XFMR/STAT INV 28LP X03
+123VU SHED BUS/218XP/220XP SPLY 28XN AC02
+49VU LIGHTING/XFMR/115V.5V/ESS BUS 29LP H03
+** ON A/C FSN 053-053
+121VU FUEL/CTR TK/PUMP1 SPLY 29QA P23
+** ON A/C FSN ALL
+122VU DUMMY CB 30HN S22
+122VU LIGHTING/TST/BOARD/SPLY 30LP X06
+** ON A/C FSN 053-053
+121VU FUEL/CTR TK/PUMP2 SPLY 30QA P26
+** ON A/C FSN ALL
+121VU APU/AUTO/EXTIG/GND/TEST 30WF L40
+49VU DUMMY CB 31HN C07
+** ON A/C FSN 053-053
+121VU FUEL/CTR TK/PUMPS1 AND 2/CTL AND IND 31QA R25
+** ON A/C FSN ALL
+2001VU VACU TOIL SYS-LAV PWR-A 32MG A01
+** ON A/C FSN 053-053
+121VU FUEL/CTR TK/PUMPS1 AND 2/CTL AND IND 32QA R26
+** ON A/C FSN 101-150
+2001VU VACU TOIL SYS-VACU-GEN 33MG A08
+** ON A/C FSN 053-100
+2001VU VACU TOIL SYS-VACUUM-GEN 33MG A08
+** ON A/C FSN 053-108
+2001VU VACU TOIL SYS-LAV PWR-E 34MG A04
+** ON A/C FSN ALL
+2001VU VACU TOIL SYS-VACU-SYS 35MG A06
+** ON A/C FSN 053-108
+2001VU VACU TOIL SYS-LAV PWR-D 39MG A03
+** ON A/C FSN 101-150
+49VU RCDR1 CVR&FDR 40TU E14
+49VU RCDR CTL 41TU E13
+** ON A/C FSN ALL
+49VU NAV/MMR/1 42RT1 G12
+121VU COM NAV/MMR/2 42RT2 L07
+** ON A/C FSN 101-150
+121VU RCDR2 CVR&FDR 42TU K16
+** ON A/C FSN 103-150
+106VU ADFR/RRU 43TU C B01
+** ON A/C FSN ALL
+121VU EIS/SDAC1 AND 2/BUS2/28VDC 44WV P03
+** ON A/C FSN 109-150
+2001VU VACU TOIL SYS-LAV PWR-D 45MG A02
+** ON A/C FSN 053-108
+2001VU VACU TOIL SYS-LAV PWR 45MG C A02
+** ON A/C FSN ALL
+121VU EIS/SDAC1 AND 2/DOOR/DET/AVNCS 46WV P02
+** ON A/C FSN 053-053
+121VU FUEL/CTR TK/AUTO/CTL 47QA R27
+** ON A/C FSN ALL
+121VU EIS/SDAC1 AND 2/DOOR/DET/PAX 48WV P05
+122VU AIR COND/TEMP CTL SYS 1/CHAN A/115VAC 49HH X22
+122VU AIR COND/TEMP CTL SYS 1/CHAN B/115VAC 50HH Y18
+122VU AIR COND/TEMP CTL SYS 1/CHAN A/28VDC 51HH X21
+121VU HYDRAULIC/LGCIU/SYS1/GRND SPLY 52GA Q34
+49VU AIR COND/TEMP CTL/SYS 1 CHAN B/28VDC 52HH D08
+122VU AIR COND/TEMP CTL SYS 2/CHAN A/115VAC 53HH W22
+122VU AIR COND/TEMP CTL SYS 2/CHAN B/115VAC 54HH Y20
+122VU AIR COND/TEMP CTL SYS 2/CHAN A/28VDC 55HH W21
+49VU FUEL/SMOKE/CONFIG/PUMP CTL 55QA A14
+122VU AIR COND/TEMP CTL SYS 2/CHAN B/28VDC 56HH Y21
+121VU LGCIU/BAT SPLY/SYS1 58GA R32
+49VU AIR COND/TEMP/CTL/IND 58HH D07
+** ON A/C FSN 101-150
+2000VU INSEAT POWER-MCU 1 58HP B05
+** ON A/C FSN ALL
+121VU LGCIU/BAT SPLY/SYS2 59GA R33
+** ON A/C FSN 101-150
+2000VU INSEAT POWER-MCU 2 59HP B08
+** ON A/C FSN ALL
+49VU ABCU &/Y BRK/PRESS IND 61GG C10
+** ON A/C FSN 101-150
+121VU FOMAX 67TA J01
+** ON A/C FSN ALL
+106VU DC BUS/1 AND 2/MONG 68WV C03
+121VU HYDRAULIC/PARK BRK/CTL/NORM 70GG N36
+121VU HYDRAULIC/PARK BRK/CTL/STBY 71GG N37
+121VU RUDDER FTU 75CE R16
+49VU LIGHTING/EMER LT/CABIN 79WL H07
+** ON A/C FSN 107-150
+105VU ECB HOT SPLY 80KD H01
+** ON A/C FSN 105-150
+49VU COM/AMU/SIDE1 81RN G06
+** ON A/C FSN 101-150
+121VU THR CTL/MALFUNCTION/PROTECTION/ENG2 82CE P18
+** ON A/C FSN 107-150
+121VU ECB HOT SPLY CTL 82KD R11
+** ON A/C FSN 105-150
+49VU COM/RMP/1 SPLY1 82RN G07
+** ON A/C FSN 101-150
+121VU THR CTL/MALFUNCTION/PROTECTION/ENG1 83CE P17
+** ON A/C FSN 105-150
+49VU COM/RMP/2 SPLY1 83RN G08
+121VU COM/AMU SIDE2 84RN M01
+121VU COM/RMP/3 SPLY1/1 SPLY2/ACP3 86RN M03
+121VU COM/RMP/2 SPLY2/3 SPLY2 87RN M04
+** ON A/C FSN 101-150
+121VU ENGINE/LATCH DOORS & SLATS/ENG1 93KS1 P39
+121VU ENGINE/LATCH DOORS & SLATS/ENG2 93KS2 P40
+** ON A/C FSN ALL
+121VU THS ACTR/ELSD 95CE P15
+** ON A/C FSN 101-150
+121VU PHMU/ENG1 95KS1 P44
+121VU PHMU/ENG2 95KS2 P45
+121VU ICU B/ENG1 PWR SUPPLY 101KS1 R42
+121VU ICU B/ENG2 PWR SUPPLY 101KS2 R43
+** ON A/C FSN 109-150
+2000VU LIGHT-LAV FWD-DC 101LQ J06
+** ON A/C FSN 101-150
+121VU DCV A/ENG1 PWR SUPPLY 102KS1 K42
+121VU DCV A/ENG2 PWR SUPPLY 102KS2 K43
+** ON A/C FSN 109-150
+2001VU LIGHT-LAV AFT-DC 102LQ E05
+** ON A/C FSN 101-150
+121VU DCV B/ENG1 PWR SUPPLY 103KS1 K44
+121VU DCV B/ENG2 PWR SUPPLY 103KS2 K45
+** ON A/C FSN ALL
+121VU ABCU/HOT BUS/SPLY 110GG P30
+** ON A/C FSN 101-150
+121VU ELT/NAV&A/C/IDENT 114MX C R14
+** ON A/C FSN 103-106
+106VU ELT-DT 114TU C B02
+** ON A/C FSN 107-150
+106VU ELT-DT 114TU B02
+** ON A/C FSN ALL
+49VU COM/CIDS/DIR ESS/1 150RH G01
+121VU COM NAV/CIDS/DIR NORM/1 151RH M05
+49VU COM/CIDS/DEU B/ESS 153RH G03
+121VU COM NAV/CIDS/DIR NORM/2 156RH M06
+49VU COM/CIDS/DIR ESS/2 157RH G02
+49VU COM/CIDS/DEU A ESS/FWD R 158RH HA10
+49VU COM/CIDS/DEU A ESS/FWD L 159RH HA09
+121VU COM NAV/CIDS/DEU B/NORM 162RH M08
+121VU COM NAV/CIDS/DEU A NORM/L FWD 163RH M09
+121VU COM NAV/CIDS/DEU A NORM/R FWD 164RH M10
+121VU COM NAV/CIDS/DEU A NORM/L AFT 167RH M11
+121VU COM NAV/CIDS/DEU A NORM/R AFT 168RH M12
+121VU COM CIDS FWD ATTND PNL 170RH Q14
+49VU COM/CIDS/FLT ATTND PNL/ESS 171RH H01
+49VU COM/CIDS/DEU A ESS/AFT R 172RH HA12
+49VU COM/CIDS/DEU A ESS/AFT L 179RH HA11
+** ON A/C FSN 101-150
+121VU SATCOM 240RV K01
+** ON A/C FSN ALL
+2000VU CAB LIGHT PWR-WINDOW-FWD 300LG H01
+2000VU CAB LIGHT PWR-WINDOW-AFT 301LG H03
+2000VU CAB LIGHT PWR-WINDOW-AFT 302LG H04
+2000VU CAB LIGHT PWR-WINDOW-FWD 303LG H02
+2000VU CAB LIGHT PWR-CEILING-AFT 304LG H07
+2000VU CAB LIGHT PWR-CEILING-FWD 305LG H05
+2000VU CAB LIGHT PWR-CEILING-FWD 306LG H06
+2000VU CAB LIGHT PWR-CEILING-AFT 307LG H08
+** ON A/C FSN 054-108
+2000VU LIGHT-ENTRY AREA-AC 308LG J02
+** ON A/C FSN 053-053
+2000VU LIGHT-CABIN-ENTRY 308LG J02
+** ON A/C FSN 109-150
+2000VU LIGHT-ENTRY AREA-AC 308LG J01
+2000VU LIGHT-ENTRY AREA-DC 318LG J02
+** ON A/C FSN 101-150
+121VU TCAS/TAWS 1004SG C K10
+121VU TCAS 1006SG L01
+** ON A/C FSN 056-100
+121VU TCAS 1006SG C L01
+** ON A/C FSN 053-100
+121VU HYDRAULIC/G HYD/PUMP ENG1/CTL 1701GK R35
+** ON A/C FSN 101-150
+49VU HYDRAULIC/G HYD/PUMP ENG1/CTL 1701GK H12
+** ON A/C FSN ALL
+121VU HYDRAULIC/G HYD/PUMP ENG1/MONG 1702GK R34
+49VU HYD/FIRE VALVE/G/ENG1 1703GK C13
+** ON A/C FSN 101-150
+49VU HYDRAULIC/FIRE VALVE/G/ALTN 1711GK H14
+** ON A/C FSN ALL
+121VU HYDRAULIC/SOL VALVES/G/Y/PTU 1801GL N34
+** ON A/C FSN 053-100
+121VU PTU INHIB/G SYS 1807GL Q32
+121VU PTU INHIB/Y SYS 1808GL Q33
+** ON A/C FSN 101-150
+121VU HYDRAULIC / PTU FLT INHIB 1825GL Q31
+** ON A/C FSN ALL
+121VU HYDRAULIC/HYD/QTY/IND 1831GQ P35
+121VU HYDRAULIC/LOW/LVL/IND 1832GQ N32
+49VU HYD/HYD/PRESS/XMTR 1841GN C11
+121VU HYDRAULIC/SOL VALVES/G/Y/B/LEAK/TST 1881GP N35
+** ON A/C FSN 101-150
+121VU T/TISS 2004SG K07
+** ON A/C FSN ALL
+123VU B HYD/ELEC PUMP 2701GJ AB09
+49VU HYD/HYD PWR/B WARN/& CTL 2702GJ C12
+** ON A/C FSN 053-100
+49VU HYD/RAT/CTL 2801GE D14
+** ON A/C FSN 101-150
+49VU HYD/RAT/CTL 2801GE B13
+** ON A/C FSN ALL
+121VU HYDRAULIC/RAT/SPLY/EXTN/SOL1 2803GE P33
+121VU HYDRAULIC/Y HYD/PUMP ENG2/MONG 3700GD Q37
+121VU HYDRAULIC/Y HYD/PUMP ENG2/CTL 3701GD Q36
+49VU HYD/FIRE VALVE/Y/ENG2 3702GD C14
+** ON A/C FSN 101-150
+49VU HYDRAULIC/Y HYD/PUMP ENG2 ALT 3710GD H02
+49VU HYDRAULIC/FIRE VALVE/Y/ALTN 3712GD H13
+** ON A/C FSN ALL
+123VU Y HYD/ELEC/ELEC PUMP/NORM 3801GX AB03
+123VU Y HYD/ELEC/PUMP 3802GX AB06
+121VU HYDRAULIC/HYD POWER/Y 3803GX N30`;
+
+    // ----- 1. 解析所有飛機 (註冊號 & FSN) -----
+    function extractAircraftList() {
+        let linesArr = rawDocContent.split(/\r?\n/);
+        let aircraft = [];
+        for (let line of linesArr) {
+            let match = line.match(/\b(B-\d{5}|F-WWIZ)\s+(\S+)\s+(\d{3})\s+(\d{3}-\d{3})/);
+            if (match) {
+                let reg = match[1];
+                let fsn = parseInt(match[3], 10);
+                if (!isNaN(fsn) && reg) aircraft.push({ reg, fsn });
+            }
         }
-        if(ceo && neo) return "both";
-        if(ceo) return "CEO";
-        if(neo) return "NEO";
-        return "both";
+        return aircraft;
     }
-    cbItems = cbItems.map(item => {
-        let engine = determineEngineType(item[4]);
-        return [...item, engine];
+
+    const aircraftList = extractAircraftList();
+    const tailSelect = document.getElementById('tailSelect');
+    aircraftList.forEach(ac => {
+        let opt = document.createElement('option');
+        opt.value = ac.fsn;
+        opt.textContent = `${ac.reg} (FSN ${ac.fsn})`;
+        tailSelect.appendChild(opt);
     });
-    
-    // 渲染及篩選邏輯
-    let currentFsn = null;
-    let onlyApplicable = false;
-    let engineFilterVal = "all";
-    let searchTerm = "";
-    
-    function isFsnInRange(fsn, rangeStr){
-        if(!rangeStr || rangeStr === "ALL") return true;
+
+    // ----- 2. 解析所有斷路器 -----
+    let linesArr = rawDocContent.split(/\r?\n/);
+    let currentFsnCondition = "ALL";
+    let cbList = [];
+
+    function parseFsnRange(rangeStr) {
+        if (rangeStr === "ALL") return [{ min: 0, max: 999, display: "ALL" }];
         let parts = rangeStr.split(',');
-        for(let part of parts){
-            part = part.trim();
-            if(part.includes('-')){ let [s,e] = part.split('-').map(Number); if(fsn>=s && fsn<=e) return true; }
-            else { if(fsn === Number(part)) return true; }
+        let ranges = [];
+        for (let p of parts) {
+            p = p.trim();
+            if (p.includes('-')) {
+                let [s, e] = p.split('-').map(v => parseInt(v, 10));
+                if (!isNaN(s) && !isNaN(e)) ranges.push({ min: s, max: e, display: `FSN ${s}-${e}` });
+            } else if (!isNaN(parseInt(p, 10))) {
+                let v = parseInt(p, 10);
+                ranges.push({ min: v, max: v, display: `FSN ${v}` });
+            }
+        }
+        if (ranges.length === 0) ranges.push({ min: 0, max: 999, display: "ALL" });
+        return ranges;
+    }
+
+    function isFsnInRanges(fsn, ranges) {
+        for (let r of ranges) {
+            if (fsn >= r.min && fsn <= r.max) return true;
         }
         return false;
     }
-    
-    function filterAndRender(){
-        let filtered = cbItems.filter(item => {
-            if(engineFilterVal !== "all" && item[5] !== engineFilterVal) return false;
-            if(searchTerm){
-                let txt = (item[0]+" "+item[1]+" "+item[2]+" "+item[3]+" "+item[4]).toLowerCase();
-                if(!txt.includes(searchTerm.toLowerCase())) return false;
+
+    // 判斷該 CB 適用於 CEO (FSN 51~100) 或 NEO (101~150) 或兩者 (用於彩色標籤)
+    function getCbType(ranges) {
+        let ceo = false, neo = false;
+        for (let r of ranges) {
+            if (r.max >= 51 && r.min <= 100) ceo = true;
+            if (r.max >= 101 && r.min <= 150) neo = true;
+        }
+        if (ceo && neo) return 'both';
+        if (ceo) return 'ceo';
+        if (neo) return 'neo';
+        return 'none';
+    }
+
+    function parseCbLine(line, conditionRanges) {
+        let trimmed = line.trim();
+        if (!trimmed) return null;
+        let parts = trimmed.split(/\s+/);
+        if (parts.length < 4) return null;
+        let panel = parts[0];
+        let lastIdx = parts.length - 1;
+        let location = parts[lastIdx];
+        let fin = parts[lastIdx - 1];
+        let designation = parts.slice(1, lastIdx - 1).join(' ');
+        return { panel, designation, fin, location, conditionRanges };
+    }
+
+    for (let i = 0; i < linesArr.length; i++) {
+        let line = linesArr[i];
+        if (line.startsWith('** ON A/C FSN')) {
+            let rangePart = line.replace('** ON A/C FSN', '').trim();
+            currentFsnCondition = rangePart;
+            continue;
+        }
+        if (line.match(/^[A-Z0-9]{3,6}VU/) && !line.startsWith('**')) {
+            let ranges = parseFsnRange(currentFsnCondition);
+            let cb = parseCbLine(line, ranges);
+            if (cb) cbList.push(cb);
+        }
+    }
+
+    // ----- 渲染表格 (支援機號過濾 + 關鍵字搜尋) -----
+    function renderTable() {
+        let selectedFsn = tailSelect.value;
+        let searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+
+        let filtered = cbList.filter(cb => {
+            // 機號過濾：若選擇全部則不過濾，否則只保留 FSN 落在該機號範圍內的 CB
+            if (selectedFsn !== 'all') {
+                let fsnNum = parseInt(selectedFsn, 10);
+                if (!isFsnInRanges(fsnNum, cb.conditionRanges)) return false;
             }
-            if(onlyApplicable && currentFsn !== null){
-                return isFsnInRange(currentFsn, item[4]);
+            if (searchTerm !== "") {
+                let haystack = `${cb.panel} ${cb.designation} ${cb.fin} ${cb.location}`.toLowerCase();
+                if (!haystack.includes(searchTerm)) return false;
             }
             return true;
         });
-        const tbody = document.getElementById("cbTableBody");
-        tbody.innerHTML = "";
-        filtered.forEach(item => {
-            let applicable = (currentFsn !== null) ? isFsnInRange(currentFsn, item[4]) : false;
-            let rowClass = (applicable && currentFsn!==null) ? "highlight-applicable" : "";
-            let engineLabel = item[5];
-            let engineText = engineLabel === "CEO" ? "CEO (V2533)" : (engineLabel==="NEO" ? "NEO (PW)" : "通用");
-            let engineClass = engineLabel === "CEO" ? "engine-ceo" : (engineLabel==="NEO" ? "engine-neo" : "engine-both");
-            let row = `<tr class="${rowClass}">
-                <td>${escapeHtml(item[0])}</td>
-                <td>${escapeHtml(item[1])}</td>
-                <td><span class="fin-code">${escapeHtml(item[2])}</span></td>
-                <td><span class="location-code">${escapeHtml(item[3])}</span></td>
-                <td>${escapeHtml(item[4])}</td>
-                <td><span class="engine-tag ${engineClass}">${engineText}</span></td>
-              </tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
-        });
-        document.getElementById("cbCountStat").innerHTML = `顯示 ${filtered.length} / ${cbItems.length} 筆斷路器 (完整資料庫)`;
-        if(currentFsn){
-            let ac = aircraftDB.find(a=>a.fsn === currentFsn);
-            document.getElementById("activeAircraftInfo").innerHTML = `✈ 當前飛機: ${ac?.reg || currentFsn} (FSN ${currentFsn}) · ${ac?.engineType || ""} ${ac?.engineModel||""} · 適用高亮模式 ${onlyApplicable?"開啟":"關閉"}`;
-        } else {
-            document.getElementById("activeAircraftInfo").innerHTML = `⚡ 未選擇特定飛機 → 顯示所有CB (引擎篩選獨立)`;
+
+        let tbody = document.getElementById('tableBody');
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-row">⚠️ 無符合條件的斷路器，請調整篩選或搜尋關鍵字</td></tr>';
+            document.getElementById('statsArea').innerHTML = `<span>📊 共 0 筆 CB</span><span>🔍 請放寬條件</span>`;
+            return;
         }
+
+        let html = '';
+        for (let cb of filtered) {
+            let type = getCbType(cb.conditionRanges);
+            let badge = '';
+            if (type === 'ceo') badge = '<span class="appl-badge appl-ceo">CEO 適用</span>';
+            else if (type === 'neo') badge = '<span class="appl-badge appl-neo">NEO 適用</span>';
+            else if (type === 'both') badge = '<span class="appl-badge appl-both">CEO / NEO</span>';
+            else badge = '<span class="appl-badge">—</span>';
+
+            let rangeDisplay = cb.conditionRanges.map(r => r.display).join(', ');
+            html += `<tr>
+                        <td style="white-space:nowrap">${badge}</td>
+                        <td><strong>${cb.panel}</strong></td>
+                        <td>${cb.designation}</td>
+                        <td><span class="fin-code">${cb.fin}</span></td>
+                        <td><span class="location">${cb.location}</span></td>
+                        <td><span class="fsn-range-badge">${rangeDisplay}</span></td>
+                      </tr>`;
+        }
+        tbody.innerHTML = html;
+        document.getElementById('statsArea').innerHTML = `<span>📊 顯示 ${filtered.length} 筆斷路器 (總原始筆數 ${cbList.length})</span><span>✈️ 虎航 A320 原始文件數據</span>`;
     }
-    function escapeHtml(str){ return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
-    
-    function populateAircraft(){
-        let sel = document.getElementById("aircraftSelect");
-        sel.innerHTML = '<option value="">-- 選擇機號查找使用CB --</option>';
-        aircraftDB.forEach(ac=>{ sel.innerHTML += `<option value="${ac.fsn}">${ac.reg} (FSN ${ac.fsn}) - ${ac.engineType} ${ac.engineModel}</option>`; });
-    }
-    function bindEvents(){
-        document.getElementById("searchInput").addEventListener("input", e=>{ searchTerm = e.target.value; filterAndRender(); });
-        document.getElementById("aircraftSelect").addEventListener("change", e=>{ currentFsn = e.target.value ? parseInt(e.target.value) : null; onlyApplicable = false; filterAndRender(); });
-        document.getElementById("engineFilter").addEventListener("change", e=>{ engineFilterVal = e.target.value; filterAndRender(); });
-        document.getElementById("toggleApplicableBtn").addEventListener("click", ()=>{ if(currentFsn!==null){ onlyApplicable = !onlyApplicable; filterAndRender(); } else alert("請先選擇飛機"); });
-        document.getElementById("resetHighlightBtn").addEventListener("click", ()=>{ currentFsn = null; onlyApplicable = false; document.getElementById("aircraftSelect").value=""; engineFilterVal="all"; document.getElementById("engineFilter").value="all"; searchTerm=""; document.getElementById("searchInput").value=""; filterAndRender(); });
-    }
-    populateAircraft();
-    bindEvents();
-    filterAndRender();
+
+    tailSelect.addEventListener('change', renderTable);
+    document.getElementById('searchInput').addEventListener('input', renderTable);
+    renderTable();
 </script>
 </body>
 </html>
