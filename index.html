@@ -3,366 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>虎航 A320 斷路器 (CB) 資料庫 - 依機號篩選</title>
+    <title>虎航 A320 斷路器 (CB) 最終穩定版</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: #f2f5f7;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            padding: 24px 20px;
-            color: #1e1e1e;
-        }
-
-        .app-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            background: rgb(255, 255, 254);
-            border-radius: 28px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            border: 1px solid rgba(94, 91, 84, 0.15);
-        }
-
-        /* 頁首 - 虎航官网明亮风格 */
-        .header {
-            background: linear-gradient(135deg, #F6AE1C 0%, #FFC84D 100%);
-            padding: 20px 28px;
-            color: #2C2B29;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .header h1 {
-            font-size: 1.9rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            color: #27231C;
-            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
-        }
-
-        .header h1 small {
-            font-size: 0.85rem;
-            font-weight: 500;
-            background: rgba(0,0,0,0.08);
-            padding: 6px 14px;
-            border-radius: 40px;
-            backdrop-filter: blur(2px);
-            color: #2C2B29;
-        }
-
-        .sub {
-            margin-top: 12px;
-            font-size: 0.9rem;
-            opacity: 0.85;
-            border-left: 3px solid #FFFFFF;
-            padding-left: 14px;
-            color: #2C2B29;
-            font-weight: 500;
-        }
-
-        .control-bar {
-            background: #FFFFFF;
-            padding: 20px 28px;
-            border-bottom: 1px solid #e9e8e6;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-end;
-            justify-content: space-between;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-end;
-        }
-
-        .filter-item {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .filter-item label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: rgb(94, 91, 84);
-        }
-
-        select, input {
-            background: white;
-            border: 1px solid #cfceca;
-            padding: 10px 16px;
-            border-radius: 48px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #2c2b29;
-            outline: none;
-            transition: all 0.2s ease;
-            min-width: 180px;
-        }
-
-        select:focus, input:focus {
-            border-color: rgb(246, 174, 28);
-            box-shadow: 0 0 0 3px rgba(246, 174, 28, 0.2);
-        }
-
-        .search-box {
-            min-width: 260px;
-            flex: 1;
-        }
-
-        .search-box input {
-            width: 100%;
-            background: #fefcf7;
-        }
-
-        .stats {
-            background: #f9f7f3;
-            padding: 10px 28px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: rgb(94, 91, 84);
-            border-bottom: 1px solid #ecebe7;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            padding: 0 0 20px 0;
-        }
-
-        .cb-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            min-width: 1000px;
-        }
-
-        .cb-table th {
-            background: #f2f0ec;
-            color: rgb(94, 91, 84);
-            font-weight: 700;
-            padding: 14px 12px;
-            text-align: left;
-            border-bottom: 2px solid rgb(246, 174, 28);
-            position: sticky;
-            top: 0;
-            backdrop-filter: blur(4px);
-        }
-
-        .cb-table td {
-            padding: 12px 12px;
-            border-bottom: 1px solid #e6e4df;
-            color: #1f1e1c;
-            vertical-align: top;
-        }
-
-        .cb-table tr:hover td {
-            background-color: #fff7e8;
-        }
-
-        .fin-code {
-            font-family: 'SF Mono', 'Courier New', monospace;
-            font-weight: 600;
-            background: #f0ede8;
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-
-        .location {
-            font-family: monospace;
-            font-weight: 600;
-            background: #eef2f5;
-            padding: 4px 8px;
-            border-radius: 14px;
-            display: inline-block;
-        }
-
-        /* 彩色徽章 */
-        .appl-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 30px;
-            display: inline-block;
-            text-align: center;
-            background: #eae7e2;
-            color: #3f3d39;
-        }
-
-        .appl-ceo {
-            background: rgb(246, 174, 28);
-            color: #2a2418;
-        }
-
-        .appl-neo {
-            background: rgb(94, 91, 84);
-            color: white;
-        }
-
-        .appl-both {
-            background: rgb(252, 201, 24);
-            color: #2c2b29;
-            border: 1px solid #d4a81a;
-        }
-
-        .fsn-range-badge {
-            font-family: monospace;
-            font-size: 0.75rem;
-            background: #eae7e2;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            font-weight: 600;
-            color: #3f3d39;
-        }
-
-        .empty-row td {
-            text-align: center;
-            padding: 48px;
-            color: #8f8c86;
-            font-style: italic;
-        }
-
-        footer {
-            background: #f9f7f3;
-            padding: 16px 28px;
-            text-align: center;
-            font-size: 0.7rem;
-            color: #8f8c86;
-            border-top: 1px solid #e0ddd7;
-        }
-
-        @media (max-width: 700px) {
-            body {
-                padding: 12px;
-            }
-            .control-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filter-group {
-                flex-direction: column;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #f2f5f7; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; padding: 24px 20px; color: #1e1e1e; }
+        .app-container { max-width: 1600px; margin: 0 auto; background: rgb(255, 255, 254); border-radius: 28px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); overflow: hidden; border: 1px solid rgba(94, 91, 84, 0.15); }
+        .header { background: linear-gradient(135deg, #F6AE1C 0%, #FFC84D 100%); padding: 20px 28px; color: #2C2B29; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .header h1 { font-size: 1.9rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .header h1 small { font-size: 0.85rem; font-weight: 500; background: rgba(0,0,0,0.08); padding: 6px 14px; border-radius: 40px; }
+        .sub { margin-top: 12px; font-size: 0.9rem; border-left: 3px solid white; padding-left: 14px; font-weight: 500; }
+        .control-bar { background: #FFFFFF; padding: 20px 28px; border-bottom: 1px solid #e9e8e6; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; }
+        .filter-group { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+        .filter-item { display: flex; flex-direction: column; gap: 6px; }
+        .filter-item label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: rgb(94, 91, 84); }
+        select, input { background: white; border: 1px solid #cfceca; padding: 10px 16px; border-radius: 48px; font-size: 0.9rem; font-weight: 500; outline: none; min-width: 160px; }
+        select:focus, input:focus { border-color: rgb(246, 174, 28); box-shadow: 0 0 0 3px rgba(246, 174, 28, 0.2); }
+        .search-box { min-width: 240px; flex: 1; }
+        .stats { background: #f9f7f3; padding: 10px 28px; font-size: 0.85rem; font-weight: 500; color: rgb(94, 91, 84); border-bottom: 1px solid #ecebe7; display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .table-wrapper { overflow-x: auto; padding: 0 0 20px 0; }
+        .cb-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 1100px; }
+        .cb-table th { background: #f2f0ec; color: rgb(94, 91, 84); font-weight: 700; padding: 14px 12px; text-align: left; border-bottom: 2px solid rgb(246, 174, 28); }
+        .cb-table td { padding: 12px 12px; border-bottom: 1px solid #e6e4df; vertical-align: top; }
+        .cb-table tr:hover td { background-color: #fff7e8; }
+        .fin-code { font-family: monospace; font-weight: 600; background: #f0ede8; display: inline-block; padding: 2px 8px; border-radius: 20px; }
+        .clipped-badge { font-family: monospace; background: #e9e5dc; padding: 2px 6px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
+        .location { font-family: monospace; font-weight: 600; background: #eef2f5; padding: 4px 8px; border-radius: 14px; display: inline-block; }
+        .appl-badge { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 30px; display: inline-block; background: #eae7e2; color: #3f3d39; }
+        .appl-ceo { background: rgb(246, 174, 28); color: #2a2418; }
+        .appl-neo { background: rgb(94, 91, 84); color: white; }
+        .appl-both { background: rgb(252, 201, 24); color: #2c2b29; border: 1px solid #d4a81a; }
+        .fsn-range-badge { font-family: monospace; font-size: 0.75rem; background: #eae7e2; padding: 4px 10px; border-radius: 20px; display: inline-block; font-weight: 600; }
+        .empty-row td { text-align: center; padding: 48px; color: #8f8c86; }
+        .panel-stats { background: #fef7e0; padding: 12px 28px; font-size: 0.8rem; border-top: 1px solid #e0ddd7; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+        .panel-stat-item { background: white; border-radius: 20px; padding: 4px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        footer { background: #f9f7f3; padding: 16px 28px; text-align: center; font-size: 0.75rem; border-top: 1px solid #e0ddd7; }
+        @media (max-width: 800px) { .control-bar, .filter-group { flex-direction: column; align-items: stretch; } }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="header">
-        <h1>
-            ✈️ 虎航 A320 斷路器 (CB) 資料庫
-            <small>Circuit Breaker Reference</small>
-        </h1>
-        <div class="sub">
-            🔧 可依「機號」篩選適用之 CB &nbsp;|&nbsp; 彩色標籤：橙黄(CEO) 灰黑(NEO) 黄色(兩者通用)<br>
-            📌 未選機號時顯示全部，關鍵字搜尋涵蓋面板/名稱/FIN/位置
-        </div>
+        <h1>✈️ 虎航 A320 斷路器 (CB) 資料庫 <small>完整解析版 - 49VU 已正常顯示</small></h1>
+        <div class="sub">🔧 可依「機號」「面板」「關鍵字」篩選 | 標籤：橙黄(CEO) 灰黑(NEO) 黄色(通用)</div>
     </div>
-
     <div class="control-bar">
         <div class="filter-group">
-            <div class="filter-item">
-                <label>✈️ 機號 (TAIL No.)</label>
-                <select id="tailSelect">
-                    <option value="all">全部機號 (顯示所有 CB)</option>
-                </select>
-            </div>
-            <div class="filter-item search-box">
-                <label>🔍 關鍵字搜尋</label>
-                <input type="text" id="searchInput" placeholder="面板 / 名稱 / FIN / 位置" autocomplete="off">
-            </div>
+            <div class="filter-item"><label>✈️ 機號</label><select id="tailSelect"><option value="all">全部機號</option></select></div>
+            <div class="filter-item"><label>📁 面板</label><select id="panelSelect"><option value="all">全部面板</option></select></div>
+            <div class="filter-item search-box"><label>🔍 關鍵字</label><input type="text" id="searchInput" placeholder="名稱 / FIN / 位置"></div>
         </div>
     </div>
-
-    <div class="stats" id="statsArea">
-        <span>📋 載入資料中...</span>
-        <span>⚡ 資料來源：原始文件 FSN 範圍</span>
-    </div>
-
-    <div class="table-wrapper">
-        <table class="cb-table" id="cbTable">
-            <thead>
-            <tr>
-                <th>簡易識別</th>
-                <th>面板 (PANEL)</th>
-                <th>名稱 / 描述</th>
-                <th>FIN</th>
-                <th>夾子位置</th>
-                <th>原始 FSN 適用範圍</th>
-            </tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="6" class="empty-row">⏳ 解析斷路器資料中，請稍後......</td></tr>
-            </tbody>
-        </table>
-    </div>
-    <footer>
-        虎航技術文件 CB 數據庫 | 機號過濾基於文件內各機之 FSN 序號 | 完全忠實於原始資料
-    </footer>
+    <div class="stats" id="statsArea"><span>📋 載入中...</span><span>⚡ 資料完整性驗證中</span></div>
+    <div class="table-wrapper"><table class="cb-table"><thead><tr><th>簡易識別</th><th>面板</th><th>名稱</th><th>FIN</th><th>CLIPPED</th><th>位置</th><th>原始 FSN 範圍</th></tr></thead><tbody id="tableBody"><tr><td colspan="7" class="empty-row">⏳ 解析中...</td></tr></tbody></table></div>
+    <div class="panel-stats" id="panelStats"></div>
+    <footer>包含 49VU/122VU/123VU/2000VU/2001VU/121VU/106VU 等所有面板 | 解析統計見下方</footer>
 </div>
-
 <script>
-    // ----- 原始文件完整內容 (已全部保留，無任何刪減) -----
-    const rawDocContent = `Model Registration Engine A/C Range
+// ---------- 原始文件內容 (完全與您提供一致) ----------
+const raw = `Model Registration Engine A/C Range
 
 320-232 B-50001 V2527-A5 053 051-100
-
 320-232 B-50005 V2527-A5 054 051-100
-
 320-232 B-50006 V2527-A5 055 051-100
-
 320-232 B-50008 V2527-A5 056 051-100
-
 320-232 B-50011 V2527-A5 057 051-100
-
 320-232 B-50015 V2527-A5 058 051-100
-
 320-232 B-50017 V2527-A5 059 051-100
-
 320-232 B-50016 V2527-A5 060 051-100
-
 320-232 B-50018 V2527-A5 061 051-100
-
 320-271N B-50021 PW1127G-JM 101 101-150
-
 320-271N B-50022 PW1127G-JM 102 101-150
-
 320-271N B-50023 PW1127G-JM 103 101-150
-
 320-271N B-50025 PW1127G-JM 104 101-150
-
 320-271N B-50026 PW1127G-JM 105 101-150
-
 320-271N B-50027 PW1127G-JM 106 101-150
-
 320-271N B-50028 PW1127G-JM 107 101-150
-
 320-271N B-50029 PW1127G-JM 108 101-150
-
 320-271N B-50031 PW1127G-JM 109 101-150
-
 320-271N F-WWIZ PW1127G-JM 110 101-150
-
 320-271N PW1127G-JM 111 101-150
-
 320-271N PW1127G-JM 112 101-150
 
 24-50-00-00 CONF 00 - AC ELECTRICAL LOAD DISTRIBUTION - DESCRIPTION AND
@@ -381,525 +100,265 @@ Circuit Breakers Data Tables by Circuit
 PANEL DESIGNATION FIN CLIPPED LOCATION
 
 49VU FLIGHT CONTROLS/SLT FLP/1 POS/IND 1CN B12
-
 122VU ANTI ICE/PROBES/1/TAT 1DA1 Z12
-
 122VU ANTI ICE/PROBES/2/TAT 1DA2 Y15
-
 ** ON A/C FSN 053-111
-
 49VU ANTI ICE/RAIN/RPLNT/CAPT 1DB1 D01
-
 ** ON A/C FSN 112-150
-
 49VU ANTI ICE/RAIN/RPLNT/CAPT 1DB1 C D01
-
 ** ON A/C FSN 053-111
-
 122VU ANTI ICE/RAIN/RPLNT/F/O 1DB2 W11
-
 ** ON A/C FSN 112-150
-
 122VU ANTI ICE/RAIN/RPLNT/F/O 1DB2 C W11
-
 ** ON A/C FSN ALL
-
 123VU ANTI ICE/L/WSHLD 1DG1 AF10
-
 123VU ANTI ICE/R/WSHLD 1DG2 AF03
-
 49VU ANTI ICE/WING/MONG 1DL C01
-
 122VU ANTI ICE/ENG/1 1DN1 X10
-
 122VU ANTI ICE/ENG/2 1DN2 W10
-
 122VU DUMMY CB 1DR X15
-
 ** ON A/C FSN 053-100
-
 2000VU WASTE WIP-DRAIMNMAST-FWD 1DU B06
-
 ** ON A/C FSN 109-150
-
 2000VU WASTE WIP-DRAINMAST-FWD 1DU B02
-
 ** ON A/C FSN 101-108
-
 2000VU DRAINMAST-FWD 1DU B02
-
 ** ON A/C FSN 053-100, 109-150
-
 2000VU POT/WASTE WIP-HEATER-LINE 1DW A02
-
 ** ON A/C FSN 101-108
-
 2000VU POT WIP-HEATER-LINE 1DW A02
-
 ** ON A/C FSN ALL
-
 121VU ENG1/REV/LOCK 1EG1 N44
-
 121VU ENG2/REV/LOCK 1EG2 N45
-
 ** ON A/C FSN 053-100
-
 121VU ENGINE/ENG1/OIL/QTY 1EN1 N39
-
 121VU ENGINE/ENG2/OIL/QTY/AND REV SNSR/CHAN B 1EN2 N41
-
 121VU ENGINE/ENG1 AND 2/EVMU 1EV R44
-
 ** ON A/C FSN ALL
-
 49VU L/G/LGCIU/SYS1/NORM 1GA C09
-
 121VU HYDRAULIC/BRAKING AND STEERING/SYS1/CTL 1GG M34
-
 121VU HYDRAULIC/BRK FAN/WHEELS/1 AND 2 1GS L32
-
 121VU DUMMY CB 1GV M31
-
 121VU HYDRAULIC/BRK/TEMP/DET/UNIT 1GW M37
-
 122VU AIR COND/RECIRC FAN/L/SPLY 1HG X18
-
 49VU AIR COND/CAB/PRESS/CTL1 1HL D09
-
 123VU AVNCS VENT/BLOWER/FAN 1HQ AD10
-
 49VU OXYGEN/CREW/OXY/SPLY 1HT HA01
-
 122VU AIR BLEED/X FEED VALVE/NORM 1HV Z20
-
 122VU CSAS / CTRL 1HW U17
-
 49VU AIR COND/RAM/AIR/INLET 1HZ D10
-
 49VU ENGINE/1 AND 2/IGN/SYS A 1JH A03
-
 49VU ENGINE/1/HP FUEL SOV 1KC1 A01
-
 49VU ENGINE/2/HP FUEL SOV 1KC2 A02
-
 121VU APU/ECB/SPLY 1KD L41
-
 ** ON A/C FSN 053-058, 060-060
-
 121VU DUMMY CB 1KT K41
-
 ** ON A/C FSN ALL
-
 122VU LIGHT/EXT LT NAV1/AND LOGO/LT 1LA T03
-
 122VU LIGHTING/LANDING LT/L/SPLY 1LB T04
-
 122VU LIGHTING/EXT LT/RWY TURN OFF/L 1LC1 W06
-
 122VU LIGHTING/EXT LT/RWY TURN OFF/R 1LC2 W05
-
 49VU LIGHTING/EMER LT/CKPT/DOME 1LE H08
-
 49VU LIGHTING/STBY/COMP/LIGHT 1LF H04
-
 ** ON A/C FSN 053-100, 103-150
-
 2001VU LIGHT-SEC19 1LJ E07
-
 ** ON A/C FSN 101-102
-
 2001VU LIGHT/SEC19 1LJ F05
-
 ** ON A/C FSN ALL
-
 2000VU AIR CONDTN-COMPT-OUTLET 1LK G08
-
 122VU LIGHTING/WHL WELL/LTG/OUT 1LL X07
-
 ** ON A/C FSN 053-108
-
 2000VU LIGHT-LAV 1LQ J01
-
 ** ON A/C FSN 109-150
-
 2000VU LIGHT-LAV-AC 1LQ J07
-
 ** ON A/C FSN ALL
-
 122VU LIGHTING/EXT LT/TAXI AND TAKE OFF/TAXI 1LR W08
-
 122VU LIGHTING/AVNCS COMPT/DOME 1LS Z07
-
 ** ON A/C FSN 107-150
-
 2000VU LIGHT-CARGO COMPT-FWD 1LU G05
-
 ** ON A/C FSN 053-106
-
 2000VU LIGHT-CARGO COMPT-FWD 1LU J06
-
 ** ON A/C FSN ALL
-
 122VU LIGHTING/EXT LT/BEACON/UPPER 1LV U06
-
 ** ON A/C FSN 053-108
-
 2000VU PASSENGER READING LIGHT 1LW G01
-
 ** ON A/C FSN ALL
-
 122VU LIGHTING/EXT LT/WING/AND ENG SCAN/R 1LX W03
-
 122VU LIGHTING/LOGO/R 1LY V02
-
 ** ON A/C FSN 109-150
-
 2000VU LIGHT-ATTND-WORK 1LZ J08
-
 ** ON A/C FSN 053-108
-
 2000VU LIGHT-ATTND-WORK 1LZ J03
-
 ** ON A/C FSN ALL
-
 2000VU WATER SYSTEM-QUANT-IND 1MA B01
-
 ** ON A/C FSN 109-150
-
 2000VU LAV FWD-HOT WATER-A 1MB F02
-
 ** ON A/C FSN 053-108
-
 2000VU LAV FWD & MID-HOT WATER-A 1MB F02
-
 123VU FWD GALLEY/FEEDER C 1MC AE10
-
 ** ON A/C FSN 109-150
-
 123VU FWD GALLEY/FEEDER C 1MC
-
 ** ON A/C FSN 053-100
-
 2000VU VACUUM CLEANER SKT-CAB-Z222 1ME F07
-
 ** ON A/C FSN 101-150
-
 2000VU VACU CLEANER SKT-CAB-Z222 1ME F07
-
 ** ON A/C FSN ALL
-
 122VU DOORS/CARGO/DOORS/CTL 1MJ T12
-
 2001VU WATER-SYS-DRAIN 1MP B05
-
 122VU DOORS CKPT LOCK 1MQ T13
-
 122VU COCKPIT SEATS/SEAT CTL/CAPT 1MS1 U11
-
 122VU COCKPIT SEATS/SEAT CTL/F/O 1MS2 U14
-
 121VU PILOTS OUTLETS/STAT INV 1NA K25
-
 106VU EMER/SHED/CNTOR/SPLY 1PH C07
-
 125VU 101PP/SPLY 1PN1 CD01
-
 124VU 202PP/SPLY 1PN2 BG01
-
 122VU ELEC/REFLNG/ON/BAT 1PR U28
-
 124VU SVCE/601PP/602PP/SPLY 1PX BB01
-
 121VU FUEL/L WING TK/PUMP1 SPLY 1QA N23
-
 121VU APU/FUEL/BLOW OFF/CTL 1QC K39
-
 121VU FUEL/X FEED/VALVE/MOT2 1QE M24
-
 121VU APU/FUEL/LP VALVE/CTL 1QF M40
-
 49VU FUEL/LP VALVE/MOT1/ENG1 1QG A08
-
 121VU FUEL/HI/LVL/SPLY 1QJ L25
-
 ** ON A/C FSN 054-150
-
 121VU FUEL/CTR TK/L&R XFR/CTL & IND 1QL R25
-
 ** ON A/C FSN ALL
-
 49VU FUEL/XFR VALVE1/WING/L 1QP A10
-
 49VU FUEL/FQI/CHAN/1 1QT A13
-
 121VU FUEL/RFL/DFL/XFR/DEFUEL/VALVE 1QU L23
-
 49VU HF1 1RE1 HA14
-
 ** ON A/C FSN 053-108
-
 121VU COM NAV/HF2 1RE2 C L13
-
 ** ON A/C FSN 053-100
-
 49VU NAV/ADF/1 1RP1 H14
-
 ** ON A/C FSN 101-150
-
 49VU NAV/ADF/1 1RP1 F09
-
 ** ON A/C FSN 053-100, 109-150
-
 121VU COM NAV/ADF/2 1RP2 K02
-
 ** ON A/C FSN 101-108
-
 121VU COM NAV/ADF/2 1RP2 C K02
-
 ** ON A/C FSN ALL
-
 121VU COM NAV/RAD ALTM/1 1SA1 K11
-
 121VU COM NAV/RAD ALTM/2 1SA2 K12
-
 49VU NAV/DME/1 1SD1 G14
-
 121VU COM NAV/DME/2 1SD2 K06
-
 121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/A 1WE1 Q43
-
 121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL2/SQUIB/A 1WE2 Q41
-
 121VU APU/FIRE/EXTIG/SQUIB/A 1WF L38
-
 121VU APU/FIRE AND OVHT/DET/LOOP A 1WG L43
-
 ** ON A/C FSN 053-108
-
 2000VU LAV FWD-OCCUPIED 1WJ F01
-
 ** ON A/C FSN 109-150
-
 2000VU LAV FWD & MID-OCCUPIED 1WJ F01
-
 ** ON A/C FSN ALL
-
 49VU LIGHTING/EMER LT/CABIN 1WL H05
-
 49VU OXYGEN/PASSENGER/CTL AND WARN 1WR HA02
-
 ** ON A/C FSN 101-106
-
 122VU AIR COND/CARGO/FIRE/EXTIG 1WX T19
-
 ** ON A/C FSN 053-100, 107-150
-
 49VU AIR COND/CARGO FIRE/EXTIG/BTL1 1WX C03
-
 ** ON A/C FSN ALL
-
 122VU ELEC/GALY & CAB/CTL 1XA S26
-
 123VU AC ESS/BUS ON/BUS 1 1XC AC12
-
 106VU AC/SHED/ESS BUS/CNTOR/CTL 1XH C04
-
 123VU BUS 1/101XP/SPLY 1XN1 AD11
-
 123VU BUS 2/202XP/SPLY 1XN2 AD02
-
 122VU ELEC/IDG1/DISC 1XT T24
-
 123VU TR2/SVCE/BUS 2/SPLY 1XX AB08
-
 121VU FLIGHT CONTROLS/SLT FLP/2POS/IND 2CN P16
-
 49VU ANTI ICE/PROBES/PHC/1 2DA1 D03
-
 122VU ANTI ICE/PROBES/PHC/2 2DA2 Y12
-
 122VU ANTI ICE/PROBES/PHC/3 2DA3 Y16
-
 49VU ANTI ICE/WING/CTL 2DL C02
-
 ** ON A/C FSN 101-108
-
 2000VU POT WIP-HEATER-CTL 2DW A01
-
 ** ON A/C FSN 053-100, 109-150
-
 2000VU POT/WASTE WIP-HEATER-CTL 2DW A01
-
 ** ON A/C FSN 053-100
-
 121VU ENGINE/ENG1/OIL/PRESS/AND REV SNSR/CHAN A 2EN1 N40
-
 121VU ENGINE/ENG2/OIL/PRESS/AND REV SNSR/CHAN A 2EN2 N42
-
 ** ON A/C FSN ALL
-
 121VU HYDRAULIC/LGCIU/SYS2 2GA Q35
-
 121VU HYDRAULIC/BRAKING AND STEERING/SYS1/IND AND/SPLY 2GG M33
-
 121VU HYDRAULIC/BRK FAN/WHEELS/3 AND 4 2GS L35
-
 ** ON A/C FSN 053-100
-
 49VU AIR BLEED/ENG 1/MONG 2HA1 D11
-
 ** ON A/C FSN 101-150
-
 49VU AIR BLEED/ENG 1/CTL 2HA1 D11
-
 ** ON A/C FSN 053-100
-
 122VU AIR BLEED/ENG 2/MONG 2HA2 Z22
-
 ** ON A/C FSN 101-150
-
 122VU AIR BLEED/ENG 2/CTL 2HA2 Z22
-
 ** ON A/C FSN ALL
-
 122VU AIR COND/RECIRC FAN/L/CTL 2HG X20
-
 122VU AIR COND/CAB PRESS/CTL/2 2HL Y22
-
 123VU AVNCS VENT/EXTC/FAN 2HQ AE02
-
 49VU AIR BLEED/X FEED/VALVE/BAT 2HV D13
-
 ** ON A/C FSN 053-100
-
 121VU ENGINE/IGN/ENG1/SYS A BAT 2JH1 P39
-
 121VU ENGINE/IGN/ENG2/SYS A BAT 2JH2 P40
-
 ** ON A/C FSN 053-106
-
 121VU APU/APU/CTL 2KD L42
-
 ** ON A/C FSN 107-150
-
 121VU APU/CTL 2KD L42
-
 ** ON A/C FSN ALL
-
 49VU ENGINE/1/FADEC A/AND EIU 1 2KS1 A04
-
 49VU ENGINE/2/FADEC A/AND EIU 2 2KS2 A05
-
 122VU LIGHTING/EXT LT/NAV2/AND LOGO/LT 2LA T02
-
 122VU LIGHTING/LANDING LT/R/SPLY 2LB T06
-
 122VU LIGHTING/FLOOD/CTR INST/PNL 2LE Z04
-
 ** ON A/C FSN 053-100, 103-150
-
 2001VU LIGHT-APU 2LJ E08
-
 ** ON A/C FSN 101-102
-
 2001VU LIGHT-APU 2LJ F06
-
 ** ON A/C FSN ALL
-
 122VU LIGHTING/WHL WELL/LTG/DOME 2LL X08
-
 122VU LIGHTING/EXT LT/TAXI AND TAKE OFF/CTL 2LR W09
-
 ** ON A/C FSN 107-150
-
 2000VU LIGHT-CARGO COMPT-AFT 2LU G06
-
 ** ON A/C FSN 053-106
-
 2000VU LIGHT-CARGO COMPT-AFT 2LU J07
-
 ** ON A/C FSN 053-108
-
 2000VU PASSENGER READING LIGHT 2LW G02
-
 ** ON A/C FSN ALL
-
 122VU LIGHTING/LOGO/L 2LY V03
-
 ** ON A/C FSN 109-150
-
 2001VU LAV AFT-HOT WATER-D 2MB B02
-
 ** ON A/C FSN 053-108
-
 2001VU LAVATORY AFT-HOT WATER-D 2MB B02
-
 ** ON A/C FSN 101-150
-
 123VU FWD GALLEY/FEEDER D 2MC AD04
-
 ** ON A/C FSN 053-100
-
 123VU FWD GALLEY/FEEDER D 2MC C AD04
-
 ** ON A/C FSN ALL
-
 121VU PILOTS OUTLETS/115V 60HZ 2NA K23
-
 122VU ELEC/REFLNG/NORM 2PR S27
-
 123VU TR1/SPLY 2PU1 AB10
-
 123VU TR2/214XP/SPLY 2PU2 AB04
-
 121VU FUEL/R WING TK/PUMP1 SPLY 2QA Q23
-
 49VU APU/FUEL/BLOW OFF/PUMP 2QC B14
-
 49VU FUEL/X FEED/VALVE/MOT1 2QE A12
-
 121VU APU/FUEL/LP VALVE/SPLY 2QF M39
-
 49VU FUEL/LP VALVE/MOT1/ENG2 2QG A09
-
 ** ON A/C FSN 054-150
-
 121VU FUEL/CTR TK/L&R XFR/CTL & IND 2QL R26
-
 ** ON A/C FSN ALL
-
 49VU FUEL/XFR VALVE1/WING/R 2QP A11
-
 121VU FUEL/FQI/CHAN/2 2QT M27
-
 121VU FUEL/RFL/DFL/SPLY 2QU L24
-
 49VU COM/VHF/1 2RC1 G09
-
 121VU COM NAV/VHF/2 2RC2 L04
-
 121VU COM NAV/VHF/3 2RC3 L05
-
 ** ON A/C FSN 053-104
-
 49VU COM/RMP/1 2RG1 G10
-
 121VU COM NAV/RMP/2 2RG2 L02
-
 ** ON A/C FSN 053-100
-
 121VU COM NAV/RMP/3 2RG3 C L03
-
 ** ON A/C FSN 101-104
-
 121VU COM NAV/RMP/3 2RG3 L03
-
 ** ON A/C FSN 053-055
-
 49VU COM/CVR/SPLY 2RK E14
-
 ** ON A/C FSN 053-106
-
 49VU NAV/VOR/1 2RS1 G13
 121VU COM NAV/VOR/2 2RS2 K08
 ** ON A/C FSN ALL
@@ -1589,151 +1048,176 @@ POST SB 46-1210 for A/C 054-054
 123VU Y HYD/ELEC/PUMP 3802GX AB06
 121VU HYDRAULIC/HYD POWER/Y 3803GX N30`;
 
-    // ----- 1. 解析所有飛機 (註冊號 & FSN) -----
-    function extractAircraftList() {
-        let linesArr = rawDocContent.split(/\r?\n/);
-        let aircraft = [];
-        for (let line of linesArr) {
-            let match = line.match(/\b(B-\d{5}|F-WWIZ)\s+(\S+)\s+(\d{3})\s+(\d{3}-\d{3})/);
-            if (match) {
-                let reg = match[1];
-                let fsn = parseInt(match[3], 10);
-                if (!isNaN(fsn) && reg) aircraft.push({ reg, fsn });
-            }
+// ---------- 解析飛機 ----------
+function extractAircraft() {
+    let ac = [];
+    let lines = raw.split('\n');
+    for (let line of lines) {
+        let m = line.match(/\b(B-\d{5}|F-WWIZ)\s+\S+\s+(\d{3})\s+\d{3}-\d{3}/);
+        if (m) {
+            let reg = m[1];
+            let fsn = parseInt(m[2], 10);
+            if (!isNaN(fsn)) ac.push({ reg, fsn });
         }
-        return aircraft;
     }
+    return ac;
+}
+const aircrafts = extractAircraft();
+const tailSelect = document.getElementById('tailSelect');
+aircrafts.forEach(a => {
+    let opt = document.createElement('option');
+    opt.value = a.fsn;
+    opt.textContent = `${a.reg} (FSN ${a.fsn})`;
+    tailSelect.appendChild(opt);
+});
 
-    const aircraftList = extractAircraftList();
-    const tailSelect = document.getElementById('tailSelect');
-    aircraftList.forEach(ac => {
-        let opt = document.createElement('option');
-        opt.value = ac.fsn;
-        opt.textContent = `${ac.reg} (FSN ${ac.fsn})`;
-        tailSelect.appendChild(opt);
+// ---------- 解析 CB 數據 (去除行首空格後匹配) ----------
+let currentFsn = "ALL";
+let cbItems = [];
+
+function parseFsnRange(rangeStr) {
+    if (rangeStr === "ALL") return [{min:0, max:999, display:"ALL"}];
+    let parts = rangeStr.split(',');
+    let ranges = [];
+    for (let p of parts) {
+        p = p.trim();
+        if (p.includes('-')) {
+            let [s,e] = p.split('-').map(v=>parseInt(v,10));
+            if (!isNaN(s) && !isNaN(e)) ranges.push({min:s, max:e, display:`FSN ${s}-${e}`});
+        } else if (!isNaN(parseInt(p,10))) {
+            let v = parseInt(p,10);
+            ranges.push({min:v, max:v, display:`FSN ${v}`});
+        }
+    }
+    if (ranges.length===0) ranges.push({min:0, max:999, display:"ALL"});
+    return ranges;
+}
+
+function isFsnInRanges(fsn, ranges) {
+    for (let r of ranges) if (fsn>=r.min && fsn<=r.max) return true;
+    return false;
+}
+
+function getCbType(ranges) {
+    let ceo=false, neo=false;
+    for (let r of ranges) {
+        if (r.max>=51 && r.min<=100) ceo=true;
+        if (r.max>=101 && r.min<=150) neo=true;
+    }
+    if (ceo && neo) return 'both';
+    if (ceo) return 'ceo';
+    if (neo) return 'neo';
+    return 'none';
+}
+
+let allLines = raw.split(/\r?\n/);
+for (let i=0; i<allLines.length; i++) {
+    let line = allLines[i];
+    if (line.startsWith('** ON A/C FSN')) {
+        currentFsn = line.replace('** ON A/C FSN','').trim();
+        continue;
+    }
+    // 去除行首空格
+    let trimmedLine = line.trimStart();
+    // 判斷是否為 CB 行：以 'VU' 結尾的單詞開頭，且不是註釋行
+    if (trimmedLine.match(/^[A-Z0-9]+VU\s/) && !trimmedLine.startsWith('**')) {
+        let tokens = trimmedLine.split(/\s+/);
+        if (tokens.length < 3) continue;
+        let panel = tokens[0];
+        let location = tokens[tokens.length-1];
+        let secondLast = tokens[tokens.length-2];
+        let fin, clipped, designationTokens;
+        // 判斷是否有 CLIPPED (單個大寫字母，長度1-2)
+        if (tokens.length >= 4 && /^[A-Z]{1,2}$/.test(secondLast)) {
+            clipped = secondLast;
+            fin = tokens[tokens.length-3];
+            designationTokens = tokens.slice(1, tokens.length-3);
+        } else {
+            clipped = "";
+            fin = secondLast;
+            designationTokens = tokens.slice(1, tokens.length-2);
+        }
+        let designation = designationTokens.join(' ');
+        let ranges = parseFsnRange(currentFsn);
+        cbItems.push({ panel, designation, fin, clipped, location, ranges });
+    }
+}
+
+// 面板統計
+const panelCount = new Map();
+cbItems.forEach(cb => panelCount.set(cb.panel, (panelCount.get(cb.panel)||0)+1));
+const panelStatsDiv = document.getElementById('panelStats');
+let statsHtml = '';
+Array.from(panelCount.keys()).sort((a,b)=>parseInt(a,10)-parseInt(b,10)).forEach(panel => {
+    statsHtml += `<span class="panel-stat-item">${panel}: ${panelCount.get(panel)} 筆</span>`;
+});
+panelStatsDiv.innerHTML = statsHtml;
+
+// 面板下拉選單
+const panelSelect = document.getElementById('panelSelect');
+Array.from(panelCount.keys()).sort((a,b)=>parseInt(a,10)-parseInt(b,10)).forEach(panel => {
+    let opt = document.createElement('option');
+    opt.value = panel;
+    opt.textContent = panel;
+    panelSelect.appendChild(opt);
+});
+
+// 更新總數
+const totalCb = cbItems.length;
+const count49 = panelCount.get('49VU') || 0;
+document.getElementById('statsArea').innerHTML = `<span>📊 總 CB 筆數：${totalCb} (其中 49VU: ${count49} 筆)</span><span>✅ 資料已完整載入，請使用篩選功能</span>`;
+
+// 渲染表格
+function render() {
+    let selectedFsn = tailSelect.value;
+    let selectedPanel = panelSelect.value;
+    let keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    let filtered = cbItems.filter(cb => {
+        if (selectedFsn !== 'all') {
+            let fsnNum = parseInt(selectedFsn,10);
+            if (!isFsnInRanges(fsnNum, cb.ranges)) return false;
+        }
+        if (selectedPanel !== 'all' && cb.panel !== selectedPanel) return false;
+        if (keyword) {
+            let text = `${cb.panel} ${cb.designation} ${cb.fin} ${cb.clipped} ${cb.location}`.toLowerCase();
+            if (!text.includes(keyword)) return false;
+        }
+        return true;
     });
 
-    // ----- 2. 解析所有斷路器 -----
-    let linesArr = rawDocContent.split(/\r?\n/);
-    let currentFsnCondition = "ALL";
-    let cbList = [];
-
-    function parseFsnRange(rangeStr) {
-        if (rangeStr === "ALL") return [{ min: 0, max: 999, display: "ALL" }];
-        let parts = rangeStr.split(',');
-        let ranges = [];
-        for (let p of parts) {
-            p = p.trim();
-            if (p.includes('-')) {
-                let [s, e] = p.split('-').map(v => parseInt(v, 10));
-                if (!isNaN(s) && !isNaN(e)) ranges.push({ min: s, max: e, display: `FSN ${s}-${e}` });
-            } else if (!isNaN(parseInt(p, 10))) {
-                let v = parseInt(p, 10);
-                ranges.push({ min: v, max: v, display: `FSN ${v}` });
-            }
-        }
-        if (ranges.length === 0) ranges.push({ min: 0, max: 999, display: "ALL" });
-        return ranges;
+    let tbody = document.getElementById('tableBody');
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-row">⚠️ 無符合條件的斷路器，請調整篩選</td></tr>';
+        return;
     }
-
-    function isFsnInRanges(fsn, ranges) {
-        for (let r of ranges) {
-            if (fsn >= r.min && fsn <= r.max) return true;
-        }
-        return false;
+    let html = '';
+    for (let cb of filtered) {
+        let type = getCbType(cb.ranges);
+        let badge = '';
+        if (type === 'ceo') badge = '<span class="appl-badge appl-ceo">CEO</span>';
+        else if (type === 'neo') badge = '<span class="appl-badge appl-neo">NEO</span>';
+        else if (type === 'both') badge = '<span class="appl-badge appl-both">CEO/NEO</span>';
+        else badge = '<span class="appl-badge">—</span>';
+        let rangeDisplay = cb.ranges.map(r=>r.display).join(', ');
+        let clippedDisplay = cb.clipped ? `<span class="clipped-badge">${cb.clipped}</span>` : '—';
+        html += `<tr>
+                    <td style="white-space:nowrap">${badge}</td>
+                    <td><strong>${cb.panel}</strong></td>
+                    <td>${cb.designation}</td>
+                    <td><span class="fin-code">${cb.fin}</span></td>
+                    <td>${clippedDisplay}</td>
+                    <td><span class="location">${cb.location}</span></td>
+                    <td><span class="fsn-range-badge">${rangeDisplay}</span></td>
+                </tr>`;
     }
+    tbody.innerHTML = html;
+}
 
-    // 判斷該 CB 適用於 CEO (FSN 51~100) 或 NEO (101~150) 或兩者 (用於彩色標籤)
-    function getCbType(ranges) {
-        let ceo = false, neo = false;
-        for (let r of ranges) {
-            if (r.max >= 51 && r.min <= 100) ceo = true;
-            if (r.max >= 101 && r.min <= 150) neo = true;
-        }
-        if (ceo && neo) return 'both';
-        if (ceo) return 'ceo';
-        if (neo) return 'neo';
-        return 'none';
-    }
-
-    function parseCbLine(line, conditionRanges) {
-        let trimmed = line.trim();
-        if (!trimmed) return null;
-        let parts = trimmed.split(/\s+/);
-        if (parts.length < 4) return null;
-        let panel = parts[0];
-        let lastIdx = parts.length - 1;
-        let location = parts[lastIdx];
-        let fin = parts[lastIdx - 1];
-        let designation = parts.slice(1, lastIdx - 1).join(' ');
-        return { panel, designation, fin, location, conditionRanges };
-    }
-
-    for (let i = 0; i < linesArr.length; i++) {
-        let line = linesArr[i];
-        if (line.startsWith('** ON A/C FSN')) {
-            let rangePart = line.replace('** ON A/C FSN', '').trim();
-            currentFsnCondition = rangePart;
-            continue;
-        }
-        if (line.match(/^[A-Z0-9]{3,6}VU/) && !line.startsWith('**')) {
-            let ranges = parseFsnRange(currentFsnCondition);
-            let cb = parseCbLine(line, ranges);
-            if (cb) cbList.push(cb);
-        }
-    }
-
-    // ----- 渲染表格 (支援機號過濾 + 關鍵字搜尋) -----
-    function renderTable() {
-        let selectedFsn = tailSelect.value;
-        let searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-
-        let filtered = cbList.filter(cb => {
-            // 機號過濾：若選擇全部則不過濾，否則只保留 FSN 落在該機號範圍內的 CB
-            if (selectedFsn !== 'all') {
-                let fsnNum = parseInt(selectedFsn, 10);
-                if (!isFsnInRanges(fsnNum, cb.conditionRanges)) return false;
-            }
-            if (searchTerm !== "") {
-                let haystack = `${cb.panel} ${cb.designation} ${cb.fin} ${cb.location}`.toLowerCase();
-                if (!haystack.includes(searchTerm)) return false;
-            }
-            return true;
-        });
-
-        let tbody = document.getElementById('tableBody');
-        if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-row">⚠️ 無符合條件的斷路器，請調整篩選或搜尋關鍵字</td></tr>';
-            document.getElementById('statsArea').innerHTML = `<span>📊 共 0 筆 CB</span><span>🔍 請放寬條件</span>`;
-            return;
-        }
-
-        let html = '';
-        for (let cb of filtered) {
-            let type = getCbType(cb.conditionRanges);
-            let badge = '';
-            if (type === 'ceo') badge = '<span class="appl-badge appl-ceo">CEO 適用</span>';
-            else if (type === 'neo') badge = '<span class="appl-badge appl-neo">NEO 適用</span>';
-            else if (type === 'both') badge = '<span class="appl-badge appl-both">CEO / NEO</span>';
-            else badge = '<span class="appl-badge">—</span>';
-
-            let rangeDisplay = cb.conditionRanges.map(r => r.display).join(', ');
-            html += `<tr>
-                        <td style="white-space:nowrap">${badge}</td>
-                        <td><strong>${cb.panel}</strong></td>
-                        <td>${cb.designation}</td>
-                        <td><span class="fin-code">${cb.fin}</span></td>
-                        <td><span class="location">${cb.location}</span></td>
-                        <td><span class="fsn-range-badge">${rangeDisplay}</span></td>
-                      </tr>`;
-        }
-        tbody.innerHTML = html;
-        document.getElementById('statsArea').innerHTML = `<span>📊 顯示 ${filtered.length} 筆斷路器 (總原始筆數 ${cbList.length})</span><span>✈️ 虎航 A320 原始文件數據</span>`;
-    }
-
-    tailSelect.addEventListener('change', renderTable);
-    document.getElementById('searchInput').addEventListener('input', renderTable);
-    renderTable();
+tailSelect.addEventListener('change', render);
+panelSelect.addEventListener('change', render);
+document.getElementById('searchInput').addEventListener('input', render);
+render();
 </script>
 </body>
 </html>
