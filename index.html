@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -12,7 +12,7 @@
         }
 
         body {
-            background-color: #f4f4f6;
+            background-color: #f2f5f7;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             padding: 24px 20px;
             color: #1e1e1e;
@@ -29,44 +29,51 @@
             border: 1px solid rgba(94, 91, 84, 0.15);
         }
 
-        /* 頁首 */
+        /* 頁首 - 虎航官网明亮风格 */
         .header {
-            background: rgb(94, 91, 84);  /* 灰黑色 */
-            padding: 24px 28px;
-            color: white;
+            background: linear-gradient(135deg, #F6AE1C 0%, #FFC84D 100%);
+            /* 明亮橙色渐变，虎航品牌感 */
+            padding: 20px 28px;
+            color: #2C2B29;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .header h1 {
             font-size: 1.9rem;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: -0.3px;
             display: flex;
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
             justify-content: space-between;
+            color: #27231C;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
         }
 
         .header h1 small {
-            font-size: 0.9rem;
-            font-weight: 400;
-            background: rgba(255,255,254,0.2);
-            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: rgba(0,0,0,0.08);
+            padding: 6px 14px;
             border-radius: 40px;
             backdrop-filter: blur(2px);
+            color: #2C2B29;
         }
 
         .sub {
             margin-top: 12px;
             font-size: 0.9rem;
             opacity: 0.85;
-            border-left: 3px solid rgb(246, 174, 28);
+            border-left: 3px solid #FFFFFF;
             padding-left: 14px;
+            color: #2C2B29;
+            font-weight: 500;
         }
 
-        /* 控制列 橙黃風格 */
+        /* 控制列 灰白清爽风格 */
         .control-bar {
-            background: rgb(255, 255, 254);
+            background: #FFFFFF;
             padding: 20px 28px;
             border-bottom: 1px solid #e9e8e6;
             display: flex;
@@ -289,9 +296,6 @@
                 <input type="text" id="searchInput" placeholder="面板 ex: 49VU / FIN: 1CN / 名稱: ANTI ICE / 位置: B12 ..." autocomplete="off">
             </div>
         </div>
-        <div style="font-size: 0.75rem; color: #b0aba2;">
-            💡 提示: 搜尋範圍涵蓋 Panel、名稱、FIN、位置、適用條件說明
-        </div>
     </div>
 
     <div class="stats" id="statsArea">
@@ -302,14 +306,14 @@
     <div class="table-wrapper">
         <table class="cb-table" id="cbTable">
             <thead>
-                <tr>
-                    <th>適用機型</th>
-                    <th>面板 (PANEL)</th>
-                    <th>名稱 / 描述</th>
-                    <th>FIN</th>
-                    <th>夾子位置 (CLIPPED LOC)</th>
-                    <th>適用條件 (FSN範圍)</th>
-                </tr>
+            <tr>
+                <th>適用機型</th>
+                <th>面板 (PANEL)</th>
+                <th>名稱 / 描述</th>
+                <th>FIN</th>
+                <th>夾子位置 (CLIPPED LOC)</th>
+                <th>適用條件 (FSN範圍)</th>
+            </tr>
             </thead>
             <tbody id="tableBody">
                 <tr><td colspan="6" class="empty-row">⏳ 解析斷路器資料中，請稍後...</td></tr>
@@ -317,7 +321,7 @@
         </table>
     </div>
     <footer>
-        虎航技術文件 CB 數據庫 | 依據 AMM / 實際線路清單匯整 | 橙黃/灰黑配色代表虎航精神 | 資料基於 FSN 有效性過濾
+        虎航技術文件 CB 數據庫 | 依據 AMM / 實際線路清單匯整 | 源自官方A/C有效性資料
     </footer>
 </div>
 
@@ -1135,59 +1139,32 @@ PANEL DESIGNATION FIN CLIPPED LOCATION
 122VU ELEC/RFL/SPLY/LOGIC 4PR U29
 
 125VU TR1/CNTOR/SPLY 4PU1 CF01
-
 124VU TR2/CNTOR/SPLY 4PU2 BC01
-
 121VU FUEL/PUMPS/1/R CTL AND L IND 4QA R28
-
 121VU FUEL/LP VALVE/MOT2/ENG2 4QG M26
-
 121VU FUEL/XFR VALVE2/WING/R 4QP M23
-
 ** ON A/C FSN 053-055
-
 49VU COM/CVR/CTL 4RK E13
-
 ** ON A/C FSN 053-104
-
 49VU COM/ACP CAPT/SELCAL/INT 1 AUDIO/AVNCS 4RN G06
-
 ** ON A/C FSN 053-100
-
 121VU COM NAV/TCAS 4SG K10
-
 ** ON A/C FSN ALL
-
 121VU APU/FIRE/LP VALVE/NORM 4WF M42
-
 49VU OXYGEN/PASSENGER/ACTUATION 4WR HA05
-
 ** ON A/C FSN 053-104
-
 121VU EIS/F/O/LOUD/SPKR 4WW P08
-
 ** ON A/C FSN ALL
-
 106VU AC ESS/BUS NORM/CNTOR/CTL 4XC B03
-
 122VU ELEC/EXT PWR/LT CLT/AVAIL 4XG X31
-
 106VU 26VAC/ESS BUS/SPLY 4XH B06
-
 123VU SVCE/BUS 2/214XP SPLY 4XX AA05
-
 49VU AUTO FLT/FAC1/28VDC 5CC1 B04
-
 121VU AUTO FLT/FAC2/28VDC 5CC2 M19
-
 49VU FLIGHT CONTROLS/SLT/CTL AND MONG/SYS1 5CV B06
-
 122VU ANTI ICE/PROBES/1/STATIC 5DA1 Z13
-
 122VU ANTI ICE/PROBES/2/STATIC 5DA2 Y11
-
 122VU ANTI ICE/PROBES/3/STATIC 5DA3 Z14
-
 122VU ANTI ICE/WHC/1 5DG1 X13
 122VU ANTI ICE/WHC/2 5DG2 W13
 49VU NAV/STBY/INST 5FN F12
@@ -1836,7 +1813,7 @@ POST SB 46-1210 for A/C 054-054
                         <td><span class="fin-code">${cb.fin}</span></td>
                         <td><span class="location">${cb.location}</span></td>
                         <td style="font-size:0.7rem; color:#7a756c;">${rangeText}</td>
-                     </tr>`;
+                      </tr>`;
         }
         tbody.innerHTML = html;
         document.getElementById('statsArea').innerHTML = `<span>📊 顯示 ${filtered.length} 筆斷路器 (總數 ${cbList.length})</span><span>✈️ 虎航 A320 CEO / NEO 專用CB清單</span>`;
