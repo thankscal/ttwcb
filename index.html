@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>虎航 (Tigerair Taiwan) - 断路器 (CB) 資訊查詢系統</title>
+    <title>虎航 A320 斷路器 (CB) 資料庫 - 原始FSN適用範圍</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +18,6 @@
             color: #1e1e1e;
         }
 
-        /* 主容器 */
         .app-container {
             max-width: 1600px;
             margin: 0 auto;
@@ -32,7 +31,6 @@
         /* 頁首 - 虎航官网明亮风格 */
         .header {
             background: linear-gradient(135deg, #F6AE1C 0%, #FFC84D 100%);
-            /* 明亮橙色渐变，虎航品牌感 */
             padding: 20px 28px;
             color: #2C2B29;
             border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -71,7 +69,6 @@
             font-weight: 500;
         }
 
-        /* 控制列 灰白清爽风格 */
         .control-bar {
             background: #FFFFFF;
             padding: 20px 28px;
@@ -132,16 +129,10 @@
             background: #fefcf7;
         }
 
-        .badge-type {
-            display: inline-block;
-            background: rgb(252, 201, 24);
-            color: #2c2b29;
+        .filter-note {
             font-size: 0.7rem;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 30px;
+            color: #8f8c86;
             margin-left: 8px;
-            vertical-align: middle;
         }
 
         .stats {
@@ -156,7 +147,6 @@
             flex-wrap: wrap;
         }
 
-        /* 表格區域 */
         .table-wrapper {
             overflow-x: auto;
             padding: 0 0 20px 0;
@@ -211,31 +201,15 @@
             display: inline-block;
         }
 
-        .appl-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 30px;
-            display: inline-block;
-            text-align: center;
+        .fsn-range-badge {
+            font-family: monospace;
+            font-size: 0.75rem;
             background: #eae7e2;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 600;
             color: #3f3d39;
-        }
-
-        .appl-ceo {
-            background: rgb(246, 174, 28);
-            color: #2a2418;
-        }
-
-        .appl-neo {
-            background: rgb(94, 91, 84);
-            color: white;
-        }
-
-        .appl-both {
-            background: rgb(252, 201, 24);
-            color: #2c2b29;
-            border: 1px solid #d4a81a;
         }
 
         .empty-row td {
@@ -276,20 +250,21 @@
             <small>Circuit Breaker Reference</small>
         </h1>
         <div class="sub">
-            🔧 適用 CEO (CFM56 / V2500) 機號 B-5001x 系列 &nbsp;|&nbsp; 🚀 NEO (PW1100G) 機號 B-5002x 系列<br>
-            📌 依據飛序號 (FSN) 範圍自動判別適用性，支援全文檢索 (面板/名稱/FIN/位置)
+            🔧 依據原始文件 FSN 範圍顯示適用條件 &nbsp;|&nbsp; 支援全文檢索 (面板/名稱/FIN/位置)<br>
+            📌 下方篩選「CEO / NEO」為輔助過濾 (CEO對應 FSN 051-100，NEO對應 FSN 101-150)，不影響原始適用範圍顯示
         </div>
     </div>
 
     <div class="control-bar">
         <div class="filter-group">
             <div class="filter-item">
-                <label>✈️ 機型 / 發動機</label>
+                <label>✈️ 機型分類 (輔助過濾)</label>
                 <select id="engineTypeSelect">
-                    <option value="all">全部 (CEO + NEO)</option>
-                    <option value="CEO">CEO (V2500 / 機號 B-5001x)</option>
-                    <option value="NEO">NEO (PW1127G / 機號 B-5002x)</option>
+                    <option value="all">全部 (不篩選)</option>
+                    <option value="CEO">CEO 對應 FSN 051-100</option>
+                    <option value="NEO">NEO 對應 FSN 101-150</option>
                 </select>
+                <span class="filter-note">※ 僅用於快速篩選，實際適用仍以右側「FSN範圍」為準</span>
             </div>
             <div class="filter-item search-box">
                 <label>🔍 強大搜尋 (關鍵字)</label>
@@ -300,34 +275,33 @@
 
     <div class="stats" id="statsArea">
         <span>📋 載入資料中...</span>
-        <span>⚡ CEO: V2500 &nbsp;|&nbsp; NEO: PW1127G</span>
+        <span>⚡ 資料來源：依原始文件 FSN 條件</span>
     </div>
 
     <div class="table-wrapper">
         <table class="cb-table" id="cbTable">
             <thead>
             <tr>
-                <th>適用機型</th>
+                <th>FSN 適用範圍 (原始文件)</th>
                 <th>面板 (PANEL)</th>
                 <th>名稱 / 描述</th>
                 <th>FIN</th>
                 <th>夾子位置 (CLIPPED LOC)</th>
-                <th>適用條件 (FSN範圍)</th>
             </tr>
             </thead>
             <tbody id="tableBody">
-                <tr><td colspan="6" class="empty-row">⏳ 解析斷路器資料中，請稍後...</td></tr>
+                <tr><td colspan="5" class="empty-row">⏳ 解析斷路器資料中，請稍後...</td></tr>
             </tbody>
         </table>
     </div>
     <footer>
-        虎航技術文件 CB 數據庫 | 依據 AMM / 實際線路清單匯整 | 源自官方A/C有效性資料
+        虎航技術文件 CB 數據庫 | 依據原始 AMM / 線路清單 | 完全忠實於文件 FSN 範圍
     </footer>
 </div>
 
 <script>
     // --------------------------------------------------------------
-    // 原始文件內容 (從給定 doc 完整複製，作為解析基底)
+    // 原始文件內容 (完整保留，不做任何人為修改)
     // --------------------------------------------------------------
     const rawDocContent = `Model Registration Engine A/C Range
 
@@ -909,235 +883,120 @@ PANEL DESIGNATION FIN CLIPPED LOCATION
 ** ON A/C FSN 053-106
 
 49VU NAV/VOR/1 2RS1 G13
-
 121VU COM NAV/VOR/2 2RS2 K08
-
 ** ON A/C FSN ALL
-
 121VU CFDS/CFDIU/SPLY 2TW J18
-
 121VU EIS/HORN/SPLY 2WC P09
-
 ** ON A/C FSN 053-100
-
 121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/B 2WE1 Q44
-
 ** ON A/C FSN 101-150
-
 121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL2/SQUIB/B 2WE1 Q44
-
 ** ON A/C FSN 053-100
-
 121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL2/SQUIB/B 2WE2 Q42
-
 ** ON A/C FSN 101-150
-
 121VU ENGINE/ENG1 AND 2 FIRE EXTIG/BTL1/SQUIB/B 2WE2 Q42
-
 ** ON A/C FSN ALL
-
 121VU APU/FIRE/EXTIG/SQUIB/B 2WF L39
-
 121VU APU/FIRE AND OVHT/DET/LOOP B 2WG L44
-
 49VU LIGHTING/EMER LT/CABIN 2WL H06
-
 49VU OXYGEN/PASSENGER/CTL AND WARN 2WR HA03
-
 121VU EIS/SDAC/2/SPLY 2WV Q06
-
 121VU EIS/FWC2/SPLY 2WW Q07
-
 121VU EIS/GPWS/28VDC 2WZ P06
-
 123VU AC ESS/BUS ON/BUS 2 2XC AC01
-
 123VU GND/PWR/PROT 2XG AB07
-
 106VU AC ESS BUS/MONG/SPLY 2XH C05
-
 122VU ELEC/IDG2/DISC 2XT T25
-
 122VU ELEC/GCU/1 2XU1 T26
-
 122VU ELEC/GCU/2 2XU2 T27
-
 123VU SVCE/BUS 2/212XP SPLY 2XX AB05
-
 49VU ANTI ICE/PROBES/PITOT/1 3DA1 D02
-
 122VU ANTI ICE/PROBES/2/PITOT 3DA2 Y14
-
 122VU ANTI ICE/PROBES/3/PITOT 3DA3 Z16
-
 121VU HYDRAULIC/BRAKING AND STEERING/SYS2/CTL 3GG M35
-
 121VU HYDRAULIC/BRK/FAN/CTL 3GS M32
-
 ** ON A/C FSN 053-100
-
 49VU AIR BLEED/ENG 1/CTL 3HA1 D12
-
 ** ON A/C FSN 101-150
-
 122VU AIR BLEED/ENG 1/MONG 3HA1 Z23
-
 ** ON A/C FSN 053-100
-
 122VU AIR BLEED/ENG 2/CTL 3HA2 Z23
-
 ** ON A/C FSN 101-150
-
 49VU AIR BLEED/ENG 2/MONG 3HA2 D12
-
 ** ON A/C FSN ALL
-
 122VU AIR COND/RECIRC FAN/R/SPLY 3HG W18
-
 122VU AIR COND/CAB PRESS/CTL/MAN 3HL Y23
-
 122VU AIR COND/AVNCS/VENT/MONG 3HQ Y17
-
 121VU ENGINE/IGN/ENG1/SYS B 3JH1 P41
-
 121VU ENGINE/IGN/ENG2/SYS B 3JH2 P42
-
 122VU LIGHTING/LANDING LT/L/CTL 3LB T05
-
 122VU LIGHTING/CKPT/DOME 3LE Y06
-
 122VU LIGHTING/INSTL LT/OVHD/PNL 3LF Y03
-
 122VU LIGHTING/EXT LT/TAXI AND TAKE OFF/TO 3LR W07
-
 ** ON A/C FSN 053-106
-
 2000VU LIGHT-LDG-AREA 3LU J08
-
 ** ON A/C FSN 107-150
-
 2000VU LIGHT-LDG-AREA 3LU G07
-
 ** ON A/C FSN 053-108
-
 2000VU PASSENGER READING LIGHT 3LW G03
-
 ** ON A/C FSN ALL
-
 123VU AFT GALLEY/FEEDER A 3MC AF04
-
 122VU ELEC/CNTOR/ESS/DC BUS/TIE 3PC W26
-
 125VU 103PP/SPLY 3PN1 CE01
-
 124VU 204PP/SPLY 3PN2 BF01
-
 122VU ELEC/TR1/MONG 3PU1 X25
-
 122VU ELEC/TR2/MONG 3PU2 X26
-
 121VU FUEL/PUMPS/1/L CTL AND R IND 3QA R23
-
 121VU APU/FUEL/PUMP/CTL 3QC M38
-
 121VU FUEL/LP VALVE/MOT2/ENG1 3QG M25
-
 ** ON A/C FSN 054-150
-
 121VU FUEL/CTR TK/AUTO/CTL 3QL R27
-
 ** ON A/C FSN ALL
-
 121VU FUEL/XFR VALVE2/WING/L 3QP M22
-
 ** ON A/C FSN 101-150
-
 121VU DATA/LOADER/SPLY 3TD J16
-
 ** ON A/C FSN ALL
-
 121VU ATSU 1 3TX1 L16
-
 121VU APU/FIRE/LP VALVE/STBY 3WF M41
-
 122VU LIGHTING/CABIN/EMER/LT 3WL V07
-
 49VU OXYGEN/PASSENGER/CTL AND WARN 3WR HA04
-
 49VU SDAC/1/SPLY 3WV F04
-
 49VU FWS/FWC1/SPLY 3WW F01
-
 ** ON A/C FSN 053-100
-
 121VU EIS/GPWS/115VAC 3WZ P07
-
 ** ON A/C FSN 101-150
-
 121VU EIS/GPWS/115VAC 3WZ C P07
-
 ** ON A/C FSN ALL
-
 123VU BUS 1/103XP/SPLY 3XN1 AB11
-
 123VU BUS 2/204XP/SPLY 3XN2 AB02
-
 122VU ELEC/AC PWR/SVCE/CTL 3XX V29
-
 49VU ANTI ICE/PROBES/AOA/1 4DA1 D04
-
 122VU ANTI ICE/PROBES/2/AOA 4DA2 Y13
-
 122VU ANTI ICE/PROBES/3/AOA 4DA3 Z15
-
 122VU ANTI ICE/WIPER/CAPT 4DB1 X12
-
 122VU ANTI ICE/F/O/WIPER 4DB2 W12
-
 122VU ANTI ICE/WINDOWS/L 4DG1 X14
-
 122VU ANTI ICE/WINDOWS/R 4DG2 W14
-
 49VU NAV PROBES/ADIRU1/115VAC 4FP1 F06
-
 121VU ADIRS/ADIRU/2/115VAC 4FP2 N06
-
 121VU ADIRS/ADIRU/3/115VAC 4FP3 N05
-
 121VU CLOCK/STBY/SPLY 4FS N02
-
 121VU HYDRAULIC/BRAKING AND STEERING/SYS2/SPLY 4GG M36
-
 122VU RPCU 4HL X23
-
 121VU ENGINE/ENG1/FADEC B/AND EIU 1 4KS1 R41
-
 ** ON A/C FSN 101-150
-
 121VU ENGINE/ENG2/FADEC B/AND EIU2 4KS2 Q40
-
 ** ON A/C FSN 053-100
-
 121VU ENGINE/ENG2/FADEC B 4KS2 Q40
-
 ** ON A/C FSN ALL
-
 122VU LIGHTING/LANDING LT/R/CTL 4LB T07
-
 122VU LIGHTING/FLOOD/F/O/SIDE 4LE Z06
-
 122VU LIGHTING/INSTL LT/MAIN INST/PNL AND/PED 4LF Y04
-
 ** ON A/C FSN 053-108
-
 2000VU PASSENGER READING LIGHT 4LW G04
-
 ** ON A/C FSN ALL
-
 106VU ESS TR/SPLY 4PE C01
-
 122VU ELEC/RFL/SPLY/LOGIC 4PR U29
-
 125VU TR1/CNTOR/SPLY 4PU1 CF01
 124VU TR2/CNTOR/SPLY 4PU2 BC01
 121VU FUEL/PUMPS/1/R CTL AND L IND 4QA R28
@@ -1712,43 +1571,43 @@ POST SB 46-1210 for A/C 054-054
 123VU Y HYD/ELEC/PUMP 3802GX AB06
 121VU HYDRAULIC/HYD POWER/Y 3803GX N30`;
 
-    // 簡易解析（因篇幅，簡化但確保所有CB完整呈現，直接按行提取及範圍）
-    // 為保證完整且不遺漏，採用逐行+累積當前範圍方式精確
+    // ----- 解析邏輯 -----
     let lines = rawDocContent.split(/\r?\n/);
-    let currentFsnCondition = "ALL"; // default ALL
+    let currentFsnCondition = "ALL";
     let cbList = [];
 
-    // 輔助: 將範圍字串解析為最小最大陣列 [{min,max}]
     function parseFsnRange(rangeStr) {
-        if(rangeStr === "ALL") return [{min:0, max:999}];
+        if(rangeStr === "ALL") return [{min:0, max:999, display:"ALL"}];
         let parts = rangeStr.split(',');
         let ranges = [];
         for(let p of parts) {
             p = p.trim();
             if(p.includes('-')) {
                 let [s,e] = p.split('-').map(v=>parseInt(v,10));
-                if(!isNaN(s) && !isNaN(e)) ranges.push({min:s, max:e});
+                if(!isNaN(s) && !isNaN(e)) ranges.push({min:s, max:e, display:`FSN ${s}-${e}`});
             } else if(!isNaN(parseInt(p,10))) {
                 let v = parseInt(p,10);
-                ranges.push({min:v, max:v});
+                ranges.push({min:v, max:v, display:`FSN ${v}`});
             }
         }
-        return ranges.length?ranges:[{min:0,max:999}];
+        if(ranges.length === 0) ranges.push({min:0, max:999, display:"ALL"});
+        return ranges;
     }
 
-    // 檢查給定fsnRangeList是否適用某機型 (CEO_FSN 51-100 , NEO_FSN 101-150)
-    function isApplicableForEngine(ranges, engineType) {
-        if(engineType === 'all') return true;
-        let testFsnValues = (engineType === 'CEO') ? [65] : [125];  // 代表性FSN
+    function rangesOverlap(ranges, targetMin, targetMax) {
         for(let r of ranges) {
-            for(let fsn of testFsnValues) {
-                if(fsn >= r.min && fsn <= r.max) return true;
-            }
+            if(r.max >= targetMin && r.min <= targetMax) return true;
         }
         return false;
     }
 
-    // 解析一行CB (PANEL, DESIGNATION, FIN, LOCATION)
+    function isApplicableForEngine(ranges, engineType) {
+        if(engineType === 'all') return true;
+        if(engineType === 'CEO') return rangesOverlap(ranges, 51, 100);
+        if(engineType === 'NEO') return rangesOverlap(ranges, 101, 150);
+        return false;
+    }
+
     function parseCbLine(line, conditionRanges) {
         let trimmed = line.trim();
         if(!trimmed) return null;
@@ -1762,7 +1621,6 @@ POST SB 46-1210 for A/C 054-054
         return { panel, designation, fin, location, conditionRanges };
     }
 
-    // 遍歷
     for(let i=0; i<lines.length; i++) {
         let line = lines[i];
         if(line.startsWith('** ON A/C FSN')) {
@@ -1770,7 +1628,6 @@ POST SB 46-1210 for A/C 054-054
             currentFsnCondition = rangePart;
             continue;
         }
-        // 忽略空行與標題行
         if(line.match(/^[A-Z0-9]{3,6}VU/) && !line.startsWith('**')) {
             let ranges = parseFsnRange(currentFsnCondition);
             let cb = parseCbLine(line, ranges);
@@ -1778,7 +1635,7 @@ POST SB 46-1210 for A/C 054-054
         }
     }
 
-    // 渲染表格與過濾
+    // 渲染表格 (第一列顯示原始FSN範圍)
     function renderTable() {
         let engine = document.getElementById('engineTypeSelect').value;
         let searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -1793,30 +1650,23 @@ POST SB 46-1210 for A/C 054-054
         });
         let tbody = document.getElementById('tableBody');
         if(filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-row">⚠️ 無符合條件的斷路器，請調整篩選或搜尋關鍵字</td></tr>';
-            document.getElementById('statsArea').innerHTML = `<span>📊 共 0 筆 CB</span><span>🔍 CEO/NEO 過濾器生效</span>`;
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-row">⚠️ 無符合條件的斷路器，請調整篩選或搜尋關鍵字</td></tr>';
+            document.getElementById('statsArea').innerHTML = `<span>📊 共 0 筆 CB</span><span>🔍 請嘗試其他篩選條件</span>`;
             return;
         }
         let html = '';
         for(let cb of filtered) {
-            let ceoMatch = isApplicableForEngine(cb.conditionRanges, 'CEO');
-            let neoMatch = isApplicableForEngine(cb.conditionRanges, 'NEO');
-            let badge = '';
-            if(ceoMatch && neoMatch) badge = '<span class="appl-badge appl-both">CEO / NEO</span>';
-            else if(ceoMatch) badge = '<span class="appl-badge appl-ceo">CEO 適用</span>';
-            else if(neoMatch) badge = '<span class="appl-badge appl-neo">NEO 適用</span>';
-            let rangeText = cb.conditionRanges.map(r=>`${r.min===0?'ALL':r.min===r.max?r.min:`${r.min}-${r.max}`}`).join(', ');
+            let rangeDisplay = cb.conditionRanges.map(r=>r.display).join(', ');
             html += `<tr>
-                        <td style="white-space:nowrap">${badge}</td>
+                        <td><span class="fsn-range-badge">${rangeDisplay}</span></td>
                         <td><strong>${cb.panel}</strong></td>
                         <td>${cb.designation}</td>
                         <td><span class="fin-code">${cb.fin}</span></td>
                         <td><span class="location">${cb.location}</span></td>
-                        <td style="font-size:0.7rem; color:#7a756c;">${rangeText}</td>
-                      </tr>`;
+                     </tr>`;
         }
         tbody.innerHTML = html;
-        document.getElementById('statsArea').innerHTML = `<span>📊 顯示 ${filtered.length} 筆斷路器 (總數 ${cbList.length})</span><span>✈️ 虎航 A320 CEO / NEO 專用CB清單</span>`;
+        document.getElementById('statsArea').innerHTML = `<span>📊 顯示 ${filtered.length} 筆斷路器 (總原始筆數 ${cbList.length})</span><span>📄 完全依原始FSN範圍顯示</span>`;
     }
 
     document.getElementById('engineTypeSelect').addEventListener('change', renderTable);
